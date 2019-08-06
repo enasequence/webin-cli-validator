@@ -7,7 +7,7 @@ apply plugin: 'signing'
 
 
 group 'uk.ac.ebi.ena.model'
-version '1.0-SNAPSHOT'
+version '1.0.0-SNAPSHOT'
 
 tasks.withType(Javadoc).all { enabled = false }
 
@@ -18,13 +18,73 @@ wrapper {
     gradleVersion = '5.2.1'
 }
 
+configurations.all {
+
+    if( !hasProperty( 'gitlab_private_token' ) )
+        project.ext.properties.gitlab_private_token = ''
+    else
+        project.ext.properties.gitlab_private_token = gitlab_private_token;
+}
+
 repositories {
     mavenLocal()
     mavenCentral()
+    maven {
+        url "https://gitlab.ebi.ac.uk/api/v4/projects/1404/packages/maven"
+        credentials(HttpHeaderCredentials) {
+            name = "Private-Token"
+            value = project.ext.properties.gitlab_private_token
+        }
+        authentication {
+            header( HttpHeaderAuthentication )
+        }
+    }
 }
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from 'build/docs/javadoc'
+}
+task sourcesJar(type: Jar)  {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+artifacts
+        {
+            archives jar
+            archives javadocJar
+            archives sourcesJar
+        }
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+    archiveClassifier = 'sources'
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifact sourceJar
+        }
+    }
+    repositories {
+        maven {
+            url "https://gitlab.ebi.ac.uk/api/v4/projects/1404/packages/maven"
+            credentials(HttpHeaderCredentials) {
+                name = "Private-Token"
+                value = project.ext.properties.gitlab_private_token
+            }
+            authentication {
+                header( HttpHeaderAuthentication )
+            }
+        }
+    }
 }
 
 task writePom {
@@ -40,8 +100,8 @@ task writePom {
                     }
                 }
             }
-        }.writeTo("pom.xml")
+        }.writeTo( "pom.xml" )
     }
 }
 
-compileJava.dependsOn(writePom)
+compileJava.dependsOn( writePom )
