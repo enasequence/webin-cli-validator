@@ -8,24 +8,13 @@
  * CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-package uk.ac.ebi.ena.model.reference;
+package uk.ac.ebi.ena.webin.cli.validator.manifest;
 
-public class Run extends Reference {
-    private String runId;
+public class ReadManifest extends Manifest<SequenceManifest.FileType> {
 
-    public Run() {
-    }
-
-    public Run(String runId, String name) {
-        this.runId = runId;
-        this.setName(name);
-    }
-
-    public String getRunId() {
-        return runId;
-    }
-
-    public void setRunId(String runId) {
-        this.runId = runId;
+    public enum FileType {
+        BAM,
+        CRAM,
+        FASTQ
     }
 }

@@ -1,20 +1,28 @@
-package uk.ac.ebi.ena.model.manifest;
-
-
-import uk.ac.ebi.ena.model.file.SubmissionFile;
-import uk.ac.ebi.ena.model.file.SubmissionFiles;
-import uk.ac.ebi.ena.model.reference.Analysis;
-import uk.ac.ebi.ena.model.reference.Run;
-import uk.ac.ebi.ena.model.reference.Sample;
-import uk.ac.ebi.ena.model.reference.Study;
+/*
+ * Copyright 2018-2019 EMBL - European Bioinformatics Institute
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
+ * file except in compliance with the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
+package uk.ac.ebi.ena.webin.cli.validator.manifest;
 
 import java.io.File;
 import java.util.ArrayList;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class Manifest<FileType extends Enum<FileType>> {
+import uk.ac.ebi.ena.webin.cli.validator.file.SubmissionFile;
+import uk.ac.ebi.ena.webin.cli.validator.file.SubmissionFiles;
+import uk.ac.ebi.ena.webin.cli.validator.reference.Analysis;
+import uk.ac.ebi.ena.webin.cli.validator.reference.Run;
+import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
+import uk.ac.ebi.ena.webin.cli.validator.reference.Study;
+
+public abstract class Manifest <FileType extends Enum<FileType>> {
 
     private String name;
     private String description;
@@ -27,13 +35,11 @@ public abstract class Manifest<FileType extends Enum<FileType>> {
     private SubmissionFiles<FileType> files = new SubmissionFiles<>();
     private boolean ignoreErrors;
 
-    /**
-     * Temporary files must written into this directory.
+    /** Temporary files must written into this directory.
      */
     private File processDir;
 
-    /**
-     * Validation messages must be written into this file.
+    /** Validation messages must be written into this file.
      */
     private File reportDir;
 

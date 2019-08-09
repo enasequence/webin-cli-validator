@@ -8,24 +8,35 @@
  * CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-package uk.ac.ebi.ena.model.reference;
+package uk.ac.ebi.ena.webin.cli.validator.reference;
 
-public class Analysis extends Reference {
-    private String analysisId;
+import java.util.List;
 
-    public Analysis() {
+/**
+ * Study reference.
+ */
+public class Study {
+
+    private String bioProjectId;
+    private List<String> locusTags;
+
+    public String getBioProjectId() {
+        return bioProjectId;
     }
 
-    public Analysis(String analysisId, String name) {
-        this.analysisId = analysisId;
-        this.setName(name);
+    public void setBioProjectId(String bioProjectId) {
+        this.bioProjectId = bioProjectId;
     }
 
-    public String getAnalysisId() {
-        return analysisId;
+    public List<String> getLocusTags() {
+        return locusTags;
     }
 
-    public void setAnalysisId(String analysisId) {
-        this.analysisId = analysisId;
+    public void setLocusTags(List<String> locusTags) {
+        this.locusTags = locusTags;
+    }
+
+    public void addLocusTag(String locusTag) {
+        locusTags.add(locusTag);
     }
 }

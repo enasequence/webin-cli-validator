@@ -8,38 +8,24 @@
  * CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-package uk.ac.ebi.ena.model.reference;
+package uk.ac.ebi.ena.webin.cli.validator.reference;
 
-/**
- * Sample reference.
- */
-public class Sample extends Reference {
+public class Run extends Reference {
+    private String runId;
 
-    private String bioSampleId;
-    private Integer taxId;
-    private String organism;
-
-    public String getBioSampleId() {
-        return bioSampleId;
+    public Run() {
     }
 
-    public void setBioSampleId(String bioSampleId) {
-        this.bioSampleId = bioSampleId;
+    public Run(String runId, String name) {
+        this.runId = runId;
+        this.setName(name);
     }
 
-    public Integer getTaxId() {
-        return taxId;
+    public String getRunId() {
+        return runId;
     }
 
-    public void setTaxId(Integer taxId) {
-        this.taxId = taxId;
-    }
-
-    public String getOrganism() {
-        return organism;
-    }
-
-    public void setOrganism(String organism) {
-        this.organism = organism;
+    public void setRunId(String runId) {
+        this.runId = runId;
     }
 }

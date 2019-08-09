@@ -1,9 +1,7 @@
 .gradle/
 .idea/
 build/
-ena-models.iml
-gradle/
+webin-cli-validator.iml
 gradlew
 gradlew.bat
-settings.gradle       
 

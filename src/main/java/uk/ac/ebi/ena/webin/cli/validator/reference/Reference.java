@@ -8,7 +8,7 @@
  * CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-package uk.ac.ebi.ena.model.reference;
+package uk.ac.ebi.ena.webin.cli.validator.reference;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -1,3 +1,7 @@
+plugins {
+    id "com.diffplug.gradle.spotless" version "3.18.0"
+}
+
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
@@ -5,14 +9,31 @@ apply plugin: 'idea'
 apply plugin: 'eclipse'
 apply plugin: 'signing'
 
-
-group 'uk.ac.ebi.ena.model'
+group 'uk.ac.ebi.ena.webin-cli'
 version '1.0.0'
 
 tasks.withType(Javadoc).all { enabled = false }
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
+
+spotless {
+    java {
+        licenseHeader('''/*
+ * Copyright 2018-2019 EMBL - European Bioinformatics Institute
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
+ * file except in compliance with the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
+''')
+        importOrder 'java', 'javax', 'org', 'com', '', 'uk'
+        removeUnusedImports()
+    }
+}
 
 wrapper {
     gradleVersion = '5.2.1'
@@ -30,7 +51,7 @@ repositories {
     mavenLocal()
     mavenCentral()
     maven {
-        url "https://gitlab.ebi.ac.uk/api/v4/projects/1404/packages/maven"
+        url "https://gitlab.ebi.ac.uk/api/v4/projects/1414/packages/maven"
         credentials(HttpHeaderCredentials) {
             name = "Private-Token"
             value = project.ext.properties.gitlab_private_token
@@ -39,10 +60,6 @@ repositories {
             header( HttpHeaderAuthentication )
         }
     }
-}
-
-dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
@@ -75,7 +92,7 @@ publishing {
     }
     repositories {
         maven {
-            url "https://gitlab.ebi.ac.uk/api/v4/projects/1404/packages/maven"
+            url "https://gitlab.ebi.ac.uk/api/v4/projects/1414/packages/maven"
             credentials(HttpHeaderCredentials) {
                 name = "Private-Token"
                 value = project.ext.properties.gitlab_private_token
