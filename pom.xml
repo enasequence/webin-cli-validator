@@ -2,9 +2,9 @@
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>uk.ac.ebi.ena.model</groupId>
-  <artifactId>ena-models</artifactId>
-  <version>1.0.0-SNAPSHOT3</version>
+  <groupId>uk.ac.ebi.ena.webin-cli</groupId>
+  <artifactId>webin-cli-validator</artifactId>
+  <version>1.0.1</version>
   <inceptionYear>2019</inceptionYear>
   <licenses>
     <license>
@@ -13,12 +13,4 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-  <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.12</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
 </project>
