@@ -10,6 +10,9 @@
  */
 package uk.ac.ebi.ena.webin.cli.validator.manifest;
 
+/**
+ * Manifest extension specific to genome context
+ */
 public class GenomeManifest extends Manifest<GenomeManifest.FileType> {
 
     public enum FileType {

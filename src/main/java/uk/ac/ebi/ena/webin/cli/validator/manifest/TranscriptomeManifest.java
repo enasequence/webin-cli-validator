@@ -10,6 +10,9 @@
  */
 package uk.ac.ebi.ena.webin.cli.validator.manifest;
 
+/**
+ * Manifest extension specific to transcriptome context
+ */
 public class TranscriptomeManifest extends Manifest<TranscriptomeManifest.FileType> {
 
     public enum FileType {

@@ -15,8 +15,13 @@ import uk.ac.ebi.ena.webin.cli.validator.manifest.Manifest;
 
 /**
  * Generic interface between webin-cli and validator, validator must implement this interface
- * @param <T>
+ * @param <T> any class extends Manifest
  */
 public interface Validator<T extends Manifest> {
+    /**
+     *
+     * @param manifest any class which extends uk.ac.ebi.ena.webin.cli.validator.manifest.Manifest
+     * @return ValidationResponse with all validation message and status
+     */
     ValidationResponse validate(T manifest);
 }

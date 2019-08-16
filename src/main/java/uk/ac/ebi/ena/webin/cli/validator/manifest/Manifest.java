@@ -22,6 +22,10 @@ import uk.ac.ebi.ena.webin.cli.validator.reference.Run;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Study;
 
+/**
+ * Class with all common parameters, must be extended to create any context specific Manifest
+ * @param <FileType>
+ */
 public abstract class Manifest <FileType extends Enum<FileType>> {
 
     private String name;

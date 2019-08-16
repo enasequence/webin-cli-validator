@@ -10,6 +10,9 @@
  */
 package uk.ac.ebi.ena.webin.cli.validator.manifest;
 
+/**
+ * Manifest extension specific to read context
+ */
 public class ReadManifest extends Manifest<SequenceManifest.FileType> {
 
     public enum FileType {

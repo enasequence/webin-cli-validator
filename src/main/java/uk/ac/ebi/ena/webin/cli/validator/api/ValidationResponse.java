@@ -14,7 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Generic response from any validator
+ * Generic response from any validator.
+ * Validator implementation should set proper status and set all the validation messages in messageList using provided api.
  */
 public class ValidationResponse {
 
