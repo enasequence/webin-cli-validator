@@ -16,32 +16,51 @@ import java.io.File;
 */
 public class SubmissionFile<FileType extends Enum<FileType>> {
 
-    private final FileType fileType;
-    private final File file;
+    private FileType fileType;
+    private File file;
 
     /** Validation messages must be written into this file.
      */
-    private final File reportFile;
+    private File reportFile;
 
-    public SubmissionFile(FileType fileType, File file) { // TODO: , File reportFile) {
+    public SubmissionFile(FileType fileType, File file) {
         this.fileType = fileType;
         this.file = file;
-        this.reportFile = null; // TODO: reportFile;
+        this.reportFile = null;
+    }
+
+    public SubmissionFile(FileType fileType, File file, File reportFile) {
+        this.fileType = fileType;
+        this.file = file;
+        this.reportFile = reportFile;
     }
 
     public FileType getFileType() {
         return fileType;
     }
 
-    public boolean isFileType(FileType fileType) {
-        return fileType != null && this.fileType != null && fileType.equals(this.fileType);
+    public void setFileType(FileType fileType) {
+        this.fileType = fileType;
     }
 
     public File getFile() {
         return file;
     }
 
+    public void setFile(File file) {
+        this.file = file;
+    }
+
     public File getReportFile() {
         return reportFile;
     }
+
+    public void setReportFile(File reportFile) {
+        this.reportFile = reportFile;
+    }
+
+    public boolean isFileType(FileType fileType) {
+        return fileType != null && fileType.equals(this.fileType);
+    }
+
 }

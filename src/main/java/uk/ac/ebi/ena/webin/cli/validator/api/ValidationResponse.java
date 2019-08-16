@@ -13,6 +13,9 @@ package uk.ac.ebi.ena.webin.cli.validator.api;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Generic response from any validator
+ */
 public class ValidationResponse {
 
     public enum status {

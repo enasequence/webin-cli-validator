@@ -39,9 +39,9 @@ public abstract class Manifest <FileType extends Enum<FileType>> {
      */
     private File processDir;
 
-    /** Validation messages must be written into this file.
+    /** Validation messages must be written into this directory.
      */
-    private File reportDir;
+    private File reportFile;
 
     public String getName() {
         return name;
@@ -151,11 +151,11 @@ public abstract class Manifest <FileType extends Enum<FileType>> {
         this.processDir = processDir;
     }
 
-    public File getReportDir() {
-        return reportDir;
+    public File getReportFile() {
+        return reportFile;
     }
 
-    public void setReportDir(File reportDir) {
-        this.reportDir = reportDir;
+    public void setReportFile(File reportFile) {
+        this.reportFile = reportFile;
     }
 }

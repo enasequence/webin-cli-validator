@@ -13,6 +13,10 @@ package uk.ac.ebi.ena.webin.cli.validator.api;
 
 import uk.ac.ebi.ena.webin.cli.validator.manifest.Manifest;
 
+/**
+ * Generic interface between webin-cli and validator, validator must implement this interface
+ * @param <T>
+ */
 public interface Validator<T extends Manifest> {
     ValidationResponse validate(T manifest);
 }
