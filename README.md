@@ -1,5 +1,6 @@
 # webin-cli-validator
 
+## Incomplete. Work in progress readme.
 Contains common classes which acts as an interface between webin-cli and validator.
 
 
@@ -39,4 +40,16 @@ Contains common classes which acts as an interface between webin-cli and validat
   ```
 
 More complex implementation can be found in https://github.com/enasequence/sequencetools/blob/master/src/main/java/uk/ac/ebi/embl/api/validation/submission/SubmissionValidator.java
+
+**Adding dependency in webin-cli**
+
+-Build a jar for the implementing validaor and add it to the library path or publish it to maven or any accessible repository and  add it as dependency in webin-cli.
+
+e.g., 
+```
+implementation( group: 'uk.ac.ebi.ena.sequence', name: 'sequencetools', version: '2.0.34' )
+```
+
+**Extending Manifest:**
+
 
