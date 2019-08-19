@@ -1,13 +1,37 @@
 # webin-cli-validator
 
-## Incomplete. Work in progress readme.
 Contains common classes which acts as an interface between webin-cli and validator.
 
+**Keywords**
+
+- context : A mandatory parameter for webin-cli tool. A functional unit, uniquelly identifies which parser,validator and submission objects has to be used. Example contexts are,
+       reads - supports all raw reads validation and submission(validation is part of readtools project).
+       genome - supports all genome assembly validation and submission. (validation is part of sequencetools project).
+       transcriptome - trnscriptome submisison validation and submission. (validation is part of sequencetools project).
+       template - csv/flatfile template submissions. (validation is part of sequencetools project).
+- manifest : Another mandatory field , a apace separated key-value pair file , which provides all the mandatory meta information required for the validator to validate specific context. Properties are specific to each context, so we need spefic manifest reader spefic to context.
+
+Sample genome context manifest:
+``` 
+FLATFILE	test_wgs.embl.gz
+AGP	test_chromosome.agp.gz
+CHROMOSOME_LIST	test_chromosome.txt.gz
+MINGAPLENGTH 100
+```
+**Implementation**
 
 - All the validators pluggable in webin-cli should implement interface uk.ac.ebi.ena.webin.cli.validator.api.Validator.
 - Validator has a single method which accepts any manifest (class with all the required properties for the validator) which extends uk.ac.ebi.ena.webin.cli.validator.manifest.Manifest<FileType>. Please check uk.ac.ebi.ena.webin.cli.validator.manifest.GenomeManifest for an example.
 - Implementing class should contruct and return the uk.ac.ebi.ena.webin.cli.validator.api.ValidationResponse with status and all the messages.
 - webin-cli will take care of reading and contructing Manifest object and invoking validator.
+**Extending Manifest:**
+
+   Manifest extension for a specific context should be available in webin-cli-validator.
+   
+   uk.ac.ebi.ena.webin.cli.validator.manifest.Manifest has all the common properties required for all contexts Webin-cli currently supporting. Extend Manifest class to add all the context spefic properties.  Please check GenomeManifest.java for sample extension.
+   
+Please finalize and provide us the manifest file structure, we will implememnt the manifest parser for your context. Manifest parser will you give you the Manifest specific to your context, which can be passed to teh validate method in Validator implementation.  
+
 
 **Sample implementation of Validator interface:**
  ```
@@ -50,9 +74,6 @@ e.g.,
 implementation( group: 'uk.ac.ebi.ena.sequence', name: 'sequencetools', version: '2.0.34' )
 ```
 
-**Extending Manifest:**
+Please contact <Rasko> rasko@ebi.ac.uk or <Senthil> vijayaraja@ebi.ac.uk for any clarification.
 
-   uk.ac.ebi.ena.webin.cli.validator.manifest.Manifest has all the common properties required for all contexts Webin-cli currently supporting. Extend Manifest class to add all the context spefic properties.  Please check GenomeManifest.java for sample extension.
-   
-Please finalize  the manifest file structure and Rasko at rasko@ebi.ac.uk or Senthil at vijayaraja@ebi.ac.uk for any clarification.
 
