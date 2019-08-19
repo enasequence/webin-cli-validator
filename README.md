@@ -27,7 +27,7 @@ CHROMOSOME_LIST	test_chromosome.txt.gz
 
 ### Validator
 
-A validator accepts a context specific manifest object, writex any errors into report files, and returns the validation result as a *ValidationResponse* object.
+A validator accepts a context specific manifest object, writes any errors into report files, and returns the validation result as a *ValidationResponse* object.
 
 ## Validator implementation
 
