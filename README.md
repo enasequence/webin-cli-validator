@@ -43,7 +43,7 @@ More complex implementation can be found in https://github.com/enasequence/seque
 
 **Adding dependency in webin-cli**
 
--Build a jar for the implementing validaor and add it to the library path or publish it to maven or any accessible repository and  add it as dependency in webin-cli.
+-Build a jar for the implementing validator and add it to the library path or publish it to maven or any accessible repository and  add it as dependency in webin-cli.
 
 e.g., 
 ```
@@ -52,4 +52,7 @@ implementation( group: 'uk.ac.ebi.ena.sequence', name: 'sequencetools', version:
 
 **Extending Manifest:**
 
+   uk.ac.ebi.ena.webin.cli.validator.manifest.Manifest has all the common properties required for all contexts Webin-cli currently supporting. Extend Manifest class to add all the context spefic properties.  Please check GenomeManifest.java for sample extension.
+   
+Please finalize  the manifest file structure and Rasko at rasko@ebi.ac.uk or Senthil at vijayaraja@ebi.ac.uk for any clarification.
 
