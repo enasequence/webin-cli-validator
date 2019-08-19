@@ -2,13 +2,13 @@
 
 Contains common classes which acts as an interface between webin-cli and validator.
 
-**Keywords**
+**Keywords:**
 
 - context : A mandatory parameter for webin-cli tool. A functional unit, uniquelly identifies which parser,validator and submission objects has to be used. Example contexts are,
-       reads - supports all raw reads validation and submission(validation is part of readtools project).
-       genome - supports all genome assembly validation and submission. (validation is part of sequencetools project).
-       transcriptome - trnscriptome submisison validation and submission. (validation is part of sequencetools project).
-       template - csv/flatfile template submissions. (validation is part of sequencetools project).
+  1. reads - supports all raw reads validation and submission(validation is part of readtools project).
+  2. genome - supports all genome assembly validation and submission. (validation is part of sequencetools project).
+  3. transcriptome - trnscriptome submisison validation and submission. (validation is part of sequencetools project).
+  4. template - csv/flatfile template submissions. (validation is part of sequencetools project).
 - manifest : Another mandatory field , a apace separated key-value pair file , which provides all the mandatory meta information required for the validator to validate specific context. Properties are specific to each context, so we need spefic manifest reader spefic to context.
 
 Sample genome context manifest:
@@ -18,7 +18,7 @@ AGP	test_chromosome.agp.gz
 CHROMOSOME_LIST	test_chromosome.txt.gz
 MINGAPLENGTH 100
 ```
-**Implementation**
+**Implementation:**
 
 - All the validators pluggable in webin-cli should implement interface uk.ac.ebi.ena.webin.cli.validator.api.Validator.
 - Validator has a single method which accepts any manifest (class with all the required properties for the validator) which extends uk.ac.ebi.ena.webin.cli.validator.manifest.Manifest<FileType>. Please check uk.ac.ebi.ena.webin.cli.validator.manifest.GenomeManifest for an example.
@@ -65,9 +65,9 @@ Please finalize and provide us the manifest file structure, we will implememnt t
 
 More complex implementation can be found in https://github.com/enasequence/sequencetools/blob/master/src/main/java/uk/ac/ebi/embl/api/validation/submission/SubmissionValidator.java
 
-**Adding dependency in webin-cli**
+**Adding dependency in webin-cli:**
 
--Build a jar for the implementing validator and add it to the library path or publish it to maven or any accessible repository and  add it as dependency in webin-cli.
+- Build a jar for the implementing validator and add it to the library path or publish it to maven or any accessible repository so that it can be added as a dependency in webin-cli. Please send us the artifact details we will add the dependency in webin-cli and  implement a manifest reader, xml creation and suubmission bundle creation logic for your context.
 
 e.g., 
 ```
