@@ -62,7 +62,7 @@ More complex implementation example can be found in https://github.com/enasequen
  - The context specific manifest classes extend the *uk.ac.ebi.ena.webin.cli.validator.manifest.Manifest* abstract class. Please check *uk.ac.ebi.ena.webin.cli.validator.manifest.GenomeManifest* for an example.
  - The *Manifest* abstract class has all the common properties available to all contexts. It is extended to add the context spefic properties.
 
-### Adding validator to Webin-CLI
+## Adding the validator to Webin-CLI
 
 - Please make your validator available in a public maven repository as a fat JAR containing all required dependencies.
 - Please send the artifact details to the Webin-CLI maintainers. 
