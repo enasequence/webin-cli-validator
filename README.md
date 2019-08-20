@@ -14,7 +14,7 @@ The context uniquely identifies the manifest parser, the validator and the submi
 
 ### Manifest 
 
-A manifest provides all the meta and file information required to validate a submission. The manifest fields are specific to each context and the webin-cli-validator contains a specific manifest object for each of the contexts. The manifest objects are created by the Webin-CLI from the submitter provided manifest files.
+A manifest provides all the meta and file information required to validate a submission. The manifest fields are specific to each context and the webin-cli-validator contains a specific manifest object for each of the contexts. A *Manifest* object is created by the Webin-CLI from the submitter provided manifest files.
 
 An extract of a genome context manifest file:
 ``` 
@@ -55,23 +55,42 @@ A validator accepts a context specific manifest object, writes any errors into r
 
 More complex implementation example can be found in https://github.com/enasequence/sequencetools/blob/master/src/main/java/uk/ac/ebi/embl/api/validation/submission/SubmissionValidator.java
 
-### Reports
-The ValidationResponse object just returns the state, we write all the validation messages and any exception messages or exception stack trace into set of report files. Webin-CLI currently generates three kind of reports.
-  1. Report file specific to each submission file : Placed under <submission_files__directory>/\<context\>/\<name\>/validate/\<file_name\>.report. Manifest has list of uk.ac.ebi.ena.webin.cli.validator.file.SubmissionFile objects, each submission file should contain a file type, actual submitted file and a report file to write all the validation message specific to actual submitted file.Webin-CLI will take care of this business. 
-  2. webin-cli.report : Available in home directory where all the submission files are exists, e.g., <submission_files_directory>/webin-cli.report. A short summary and/or exception stacktrace of ubnormal termination of webin-CLI execution.
-  3. webin-cli.report : Messages which can’t be attributed to a specific input file. Placed under \<submission_files__directory\>/\<context\>/\<name\>/validate/webin-cli.report
+## Validator report files
+
+The *ValidationResponse* only contains the *VALIDATION_SUCCESS* or *VALIDATION_ERROR* state. The validators are expected to write all messages intended for submitters, including error messages and exception stack traces, into report files. The report file locations and names are set by the Webin-CLI and provided to the validators using the *Manifest* object.
+
+### Input file specific report files
+
+Whenever possible, messages should be written into input file specific report files. These report files are defined in the   *uk.ac.ebi.ena.webin.cli.validator.file.SubmissionFile.reportFile* field. They point to '\<output directory\>/\<context\>/\<name\>/validate/\<file\>.report' files where \<file\> corresponds to the input file name that is being validated. The input file is defined in the *uk.ac.ebi.ena.webin.cli.validator.file.SubmissionFile.file* field.
+
+### Submission specific report files
+
+Messages which can’t be attributed to specific input files should be written into the submission specific report file. This report file is defined in the *uk.ac.ebi.ena.webin.cli.validator.file.Manifest.reportFile* field and point to the '\<output directory\>/\<context\>/\<name\>/validate/webin-cli.report' file.
+
+## Validator temporary files
+
+Any temporary files should be written into the *uk.ac.ebi.ena.webin.cli.validator.file.Manifest.processDir* directory.
+
 ## Manifest implementation
 
-- Please provide us with the desired manifest file fields for your specific context. 
-- A context specific manifest object will be made available in the webin-cli-validator project by the Webin-CLI maintainers after an agreement on the manifest fields with the validator implementors.
- - The context specific manifest classes extend the *uk.ac.ebi.ena.webin.cli.validator.manifest.Manifest* abstract class. Please check *uk.ac.ebi.ena.webin.cli.validator.manifest.GenomeManifest* for an example.
- - The *Manifest* abstract class has all the common properties available to all contexts. It is extended to add the context spefic properties.
+Please provide us with the desired manifest file fields for your specific context. A context specific *Manifest* class will be created Webin-CLI maintainers after an agreement on the manifest fields with the validator implementors.
+
+The context specific *Manifest* class will extend the *uk.ac.ebi.ena.webin.cli.validator.manifest.Manifest* abstract class. Manifest fields defined in the abstract class that are available to all contexts include:
+- description
+- authors
+- address
+- sample
+- study
+- run
+- analysis
+- files
+- ignoreErrors
 
 ## Adding the validator to Webin-CLI
 
-- Please make your validator available in a public maven repository as a fat JAR containing all required dependencies.
-- Please send the artifact details to the Webin-CLI maintainers. 
-- The Webin-CLI maintainers will add your JAR dependency into Webin-CLI and implement a manifest reader as well as xml creation and submission functionality for your context.
+- Make your validator available in a public maven repository as a fat JAR containing all required dependencies.
+- Send the artifact details to the Webin-CLI maintainers. 
+- Webin-CLI maintainers will add your JAR dependency into Webin-CLI and implement a manifest reader as well as xml creation and submission functionality for your context.
 
 ## Webin-CLI maintainers
 
