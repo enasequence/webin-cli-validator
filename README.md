@@ -25,6 +25,21 @@ AGP	test_chromosome.agp.gz
 CHROMOSOME_LIST	test_chromosome.txt.gz
 ```
 
+## Manifest implementation
+
+Please provide us with the desired manifest file fields for your specific context. A context specific *Manifest* class will be created Webin-CLI maintainers after an agreement on the manifest fields with the validator implementors.
+
+The context specific *Manifest* class will extend the *uk.ac.ebi.ena.webin.cli.validator.manifest.Manifest* abstract class. Manifest fields defined in the abstract class that are available to all contexts include:
+- description
+- authors
+- address
+- sample
+- study
+- run
+- analysis
+- files
+- ignoreErrors
+
 ### Validator
 
 A validator accepts a context specific manifest object, writes any errors into report files, and returns the validation result as a *ValidationResponse* object.
@@ -70,21 +85,6 @@ Messages which can’t be attributed to specific input files should be written i
 ## Validator temporary files
 
 Any temporary files should be written into the *uk.ac.ebi.ena.webin.cli.validator.file.Manifest.processDir* directory.
-
-## Manifest implementation
-
-Please provide us with the desired manifest file fields for your specific context. A context specific *Manifest* class will be created Webin-CLI maintainers after an agreement on the manifest fields with the validator implementors.
-
-The context specific *Manifest* class will extend the *uk.ac.ebi.ena.webin.cli.validator.manifest.Manifest* abstract class. Manifest fields defined in the abstract class that are available to all contexts include:
-- description
-- authors
-- address
-- sample
-- study
-- run
-- analysis
-- files
-- ignoreErrors
 
 ## Adding the validator to Webin-CLI
 
