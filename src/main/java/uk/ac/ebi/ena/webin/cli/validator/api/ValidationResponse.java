@@ -10,9 +10,6 @@
  */
 package uk.ac.ebi.ena.webin.cli.validator.api;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Generic response from any validator.
  * Validator implementation should set proper status and set all the validation messages in messageList using provided api.
@@ -25,15 +22,9 @@ public class ValidationResponse {
     }
 
     private ValidationResponse.status validationStatus;
-    private List<String> messageList = new ArrayList<>();
 
     public ValidationResponse(ValidationResponse.status validationStatus) {
         this.validationStatus = validationStatus;
-    }
-
-    public ValidationResponse(ValidationResponse.status validationStatus, String message) {
-        this.validationStatus = validationStatus;
-        this.messageList.add(message);
     }
 
     public void setStatus(ValidationResponse.status validationStatus) {
@@ -44,19 +35,4 @@ public class ValidationResponse {
         return this.validationStatus;
     }
 
-    public void addMessage(String message) {
-        this.messageList.add(message);
-    }
-
-    public void addMessage(List<String> messages) {
-        this.messageList.addAll(messages);
-    }
-
-    public String getFirstMessage() {
-        return messageList.isEmpty() ? "" : messageList.get(0);
-    }
-
-    public List<String> getMessages() {
-        return messageList;
-    }
 }
