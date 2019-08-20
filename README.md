@@ -55,6 +55,11 @@ A validator accepts a context specific manifest object, writes any errors into r
 
 More complex implementation example can be found in https://github.com/enasequence/sequencetools/blob/master/src/main/java/uk/ac/ebi/embl/api/validation/submission/SubmissionValidator.java
 
+### Reports
+The ValidationResponse object just returns the state, we report all the validation messages and any exception messages or exception stack trace by writing them into set of report files. Webin-CLI currently generates three kind of reports.
+  1. Report file specific to each submission file : Placed under <submission_files__directory>/\<context\>/<name>/validate/<file_name>.report. Manifest has list of uk.ac.ebi.ena.webin.cli.validator.file.SubmissionFile objects, each submission file should contain a file type, actual submitted file and a report file to write all the validation message specific to actual submitted file.Webin-CLI will take care of this business. 
+  2. webin-cli.report : Available in home directory where all the submission files are exists, e.g., <submission_files_directory>/webin-cli.report. A short summary and/or exception stacktrace of ubnormal termination of webin-CLI execution.
+  3. webin-cli.report : Messages which can’t be attributed to a specific input file. Placed under <submission_files__directory>/<context>/<name>/validate/webin-cli.report
 ## Manifest implementation
 
 - Please provide us with the desired manifest file fields for your specific context. 
