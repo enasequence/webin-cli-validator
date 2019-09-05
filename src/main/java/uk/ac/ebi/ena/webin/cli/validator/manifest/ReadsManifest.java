@@ -1,3 +1,13 @@
+/*
+ * Copyright 2018-2019 EMBL - European Bioinformatics Institute
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
+ * file except in compliance with the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
 package uk.ac.ebi.ena.webin.cli.validator.manifest;
 
 public class ReadsManifest extends Manifest<ReadsManifest.FileType> {
@@ -8,6 +18,23 @@ public class ReadsManifest extends Manifest<ReadsManifest.FileType> {
     FASTQ
   }
 
+  public enum QualityScore {
+    QUALITY_SCORE_PHRED_33("PHRED_33"),
+    QUALITY_SCORE_PHRED_64("PHRED_64"),
+    QUALITY_SCORE_LOGODDS("LOGODDS"),
+    QUALITY_SCORE_UNKNOWN("");
+
+    private final String strValue;
+
+    QualityScore(String strValue) {
+      this.strValue = strValue;
+    }
+
+    public String getStrValue() {
+      return strValue;
+    }
+  }
+
   private String platform;
   private String instrument;
   private Integer insertSize;
@@ -16,7 +43,7 @@ public class ReadsManifest extends Manifest<ReadsManifest.FileType> {
   private String librarySource;
   private String librarySelection;
   private String libraryStrategy;
-  private String qualityScore;
+  private QualityScore qualityScore;
   private Integer pairingHorizon = 500_000_000;
 
     public String getPlatform() {
@@ -83,12 +110,23 @@ public class ReadsManifest extends Manifest<ReadsManifest.FileType> {
         this.libraryStrategy = libraryStrategy;
     }
 
-    public String getQualityScore() {
+    public QualityScore getQualityScore() {
         return qualityScore;
     }
 
-    public void setQualityScore(String qualityScore) {
+    public void setQualityScore(QualityScore qualityScore) {
         this.qualityScore = qualityScore;
+    }
+
+    public void setQualityScore(String qualityScoreStr) {
+      for (QualityScore qs: QualityScore.values()) {
+        if (qs.getStrValue().equals(qualityScoreStr)) {
+          this.qualityScore = qs;
+          return;
+        }
+      }
+      this.qualityScore = QualityScore.QUALITY_SCORE_UNKNOWN;
+      this.qualityScore = QualityScore.valueOf("str");
     }
 
     public Integer getPairingHorizon() {
@@ -99,4 +137,3 @@ public class ReadsManifest extends Manifest<ReadsManifest.FileType> {
         this.pairingHorizon = pairingHorizon;
     }
 }
-
