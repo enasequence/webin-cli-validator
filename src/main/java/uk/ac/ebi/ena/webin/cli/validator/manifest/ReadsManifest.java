@@ -19,20 +19,10 @@ public class ReadsManifest extends Manifest<ReadsManifest.FileType> {
   }
 
   public enum QualityScore {
-    QUALITY_SCORE_PHRED_33("PHRED_33"),
-    QUALITY_SCORE_PHRED_64("PHRED_64"),
-    QUALITY_SCORE_LOGODDS("LOGODDS"),
-    QUALITY_SCORE_UNKNOWN("");
-
-    private final String strValue;
-
-    QualityScore(String strValue) {
-      this.strValue = strValue;
-    }
-
-    public String getStrValue() {
-      return strValue;
-    }
+    QUALITY_SCORE_PHRED_33,
+    QUALITY_SCORE_PHRED_64,
+    QUALITY_SCORE_LOGODDS,
+    QUALITY_SCORE_UNKNOWN
   }
 
   private String platform;
@@ -116,17 +106,6 @@ public class ReadsManifest extends Manifest<ReadsManifest.FileType> {
 
     public void setQualityScore(QualityScore qualityScore) {
         this.qualityScore = qualityScore;
-    }
-
-    public void setQualityScore(String qualityScoreStr) {
-      for (QualityScore qs: QualityScore.values()) {
-        if (qs.getStrValue().equals(qualityScoreStr)) {
-          this.qualityScore = qs;
-          return;
-        }
-      }
-      this.qualityScore = QualityScore.QUALITY_SCORE_UNKNOWN;
-      this.qualityScore = QualityScore.valueOf("str");
     }
 
     public Integer getPairingHorizon() {
