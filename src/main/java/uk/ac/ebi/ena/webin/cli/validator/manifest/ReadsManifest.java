@@ -19,9 +19,9 @@ public class ReadsManifest extends Manifest<ReadsManifest.FileType> {
   }
 
   public enum QualityScore {
-    QUALITY_SCORE_PHRED_33,
-    QUALITY_SCORE_PHRED_64,
-    QUALITY_SCORE_LOGODDS
+    PHRED_33,
+    PHRED_64,
+    LOGODDS
   }
 
   private String platform;
