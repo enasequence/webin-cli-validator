@@ -23,6 +23,8 @@ public class ValidationResponse {
 
     private ValidationResponse.status validationStatus;
 
+    public ValidationResponse(){}
+
     public ValidationResponse(ValidationResponse.status validationStatus) {
         this.validationStatus = validationStatus;
     }

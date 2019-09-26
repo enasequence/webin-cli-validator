@@ -8,16 +8,20 @@
  * CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-package uk.ac.ebi.ena.webin.cli.validator.manifest;
+package uk.ac.ebi.ena.webin.cli.validator.response;
 
-/**
- * Manifest extension specific to read context
- */
-public class ReadManifest extends Manifest<SequenceManifest.FileType> {
+import uk.ac.ebi.ena.webin.cli.validator.api.ValidationResponse;
 
-    public enum FileType {
-        BAM,
-        CRAM,
-        FASTQ
+public class ReadsValidationResponse extends ValidationResponse {
+
+    private boolean paired = false;
+
+    public boolean isPaired() {
+        return paired;
     }
+
+    public void setPaired(boolean paired) {
+        this.paired = paired;
+    }
+
 }
