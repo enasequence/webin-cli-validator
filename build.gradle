@@ -10,7 +10,7 @@ apply plugin: 'eclipse'
 apply plugin: 'signing'
 
 group 'uk.ac.ebi.ena.webin-cli'
-version '1.0.4'
+version '1.0.5'
 
 tasks.withType(Javadoc).all { enabled = false }
 
@@ -41,10 +41,17 @@ wrapper {
 
 configurations.all {
 
-    if( !hasProperty( 'gitlab_private_token' ) )
+    if (!hasProperty('gitlab_private_token'))
         project.ext.properties.gitlab_private_token = ''
     else
         project.ext.properties.gitlab_private_token = gitlab_private_token;
+}
+
+dependencies {
+    implementation('org.slf4j:slf4j-api:1.7.28')
+    testImplementation('junit:junit:4.12')
+    testImplementation('org.assertj:assertj-core:3.11.1')
+    testImplementation('org.slf4j:slf4j-simple:1.7.28')
 }
 
 repositories {
@@ -57,7 +64,7 @@ repositories {
             value = project.ext.properties.gitlab_private_token
         }
         authentication {
-            header( HttpHeaderAuthentication )
+            header(HttpHeaderAuthentication)
         }
     }
 }
@@ -66,7 +73,7 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
     from 'build/docs/javadoc'
 }
-task sourcesJar(type: Jar)  {
+task sourcesJar(type: Jar) {
     from sourceSets.main.allSource
     classifier = 'sources'
 }
@@ -98,7 +105,7 @@ publishing {
                 value = project.ext.properties.gitlab_private_token
             }
             authentication {
-                header( HttpHeaderAuthentication )
+                header(HttpHeaderAuthentication)
             }
         }
     }
@@ -117,8 +124,8 @@ task writePom {
                     }
                 }
             }
-        }.writeTo( "pom.xml" )
+        }.writeTo("pom.xml")
     }
 }
 
-compileJava.dependsOn( writePom )
+compileJava.dependsOn(writePom)

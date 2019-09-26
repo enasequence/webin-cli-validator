@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>uk.ac.ebi.ena.webin-cli</groupId>
   <artifactId>webin-cli-validator</artifactId>
-  <version>1.0.1</version>
+  <version>1.0.5</version>
   <inceptionYear>2019</inceptionYear>
   <licenses>
     <license>
