@@ -55,6 +55,24 @@ public class ValidationResult implements AutoCloseable {
         this.origin.addAll(Arrays.asList(origin));
     }
 
+    public ValidationResult(ValidationResult parentResult, File reportFile, ValidationOrigin... origin) {
+        try {
+            if (reportFile != null) {
+                this.strm = Files.newOutputStream(
+                    reportFile.toPath(),
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.APPEND,
+                    StandardOpenOption.SYNC);
+            } else {
+                this.strm = null;
+            }
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+        this.parentResult = parentResult;
+        this.origin.addAll(Arrays.asList(origin));
+    }
+
     /**
      * Creates a new validation result that logs messages.
      */
@@ -138,6 +156,11 @@ public class ValidationResult implements AutoCloseable {
         return new ValidationResult(this, origin);
     }
 
+    public ValidationResult create(File reportFile, ValidationOrigin... origin) {
+        return new ValidationResult(this, reportFile, origin);
+    }
+
+
     public boolean isLog() {
         return log;
     }
@@ -166,11 +189,10 @@ public class ValidationResult implements AutoCloseable {
         if (parentResult != null) {
             parentResult.add(message);
         }
-        // Write messages only once.
+        if (strm != null) {
+            report(message);
+        }
         if (this.parentResult == null) {
-            if (strm != null) {
-                report(message);
-            }
             if (this.log) {
                 log(message);
             }
