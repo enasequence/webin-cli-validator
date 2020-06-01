@@ -23,6 +23,7 @@ public class TranscriptomeManifest extends Manifest<TranscriptomeManifest.FileTy
     private String program;
     private String platform;
     private Boolean tpa;
+    private String assemblyType;
 
     public String getProgram() {
         return program;
@@ -49,5 +50,13 @@ public class TranscriptomeManifest extends Manifest<TranscriptomeManifest.FileTy
 
     public void setTpa(Boolean tpa) {
         this.tpa = tpa;
+    }
+
+    public String getAssemblyType() {
+        return assemblyType;
+    }
+
+    public void setAssemblyType(String assemblyType) {
+        this.assemblyType = assemblyType;
     }
 }
