@@ -37,6 +37,8 @@ public abstract class Manifest <FileType extends Enum<FileType>> {
     private List<Run> run = new ArrayList<>();
     private List<Analysis> analysis = new ArrayList<>();
     private SubmissionFiles<FileType> files = new SubmissionFiles<>();
+    private String submissionTool;
+    private String submissionToolVersion;
     private boolean ignoreErrors;
 
     /** Temporary files must written into this directory.
@@ -161,5 +163,21 @@ public abstract class Manifest <FileType extends Enum<FileType>> {
 
     public void setReportFile(File reportFile) {
         this.reportFile = reportFile;
+    }
+
+    public String getSubmissionTool() {
+        return submissionTool;
+    }
+
+    public void setSubmissionTool(String submissionTool) {
+        this.submissionTool = submissionTool;
+    }
+
+    public String getSubmissionToolVersion() {
+        return submissionToolVersion;
+    }
+
+    public void setSubmissionToolVersion(String submissionToolVersion) {
+        this.submissionToolVersion = submissionToolVersion;
     }
 }
