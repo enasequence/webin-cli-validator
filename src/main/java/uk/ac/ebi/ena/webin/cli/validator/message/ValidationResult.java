@@ -10,6 +10,11 @@
  */
 package uk.ac.ebi.ena.webin.cli.validator.message;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import uk.ac.ebi.ena.webin.cli.validator.message.ValidationMessage.Severity;
+import uk.ac.ebi.ena.webin.cli.validator.message.listener.MessageListener;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -20,12 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import uk.ac.ebi.ena.webin.cli.validator.message.ValidationMessage.Severity;
-import uk.ac.ebi.ena.webin.cli.validator.message.listener.MessageListener;
 
 /**
  * Writes validation messages into a report file or forwards them to a listener.
@@ -38,8 +37,8 @@ public class ValidationResult implements AutoCloseable {
         private ValidationResult parentResult;
         private OutputStream strm;
         private boolean log;
-        private final List<ValidationOrigin> origin = new ArrayList<>();
-        private final List<MessageListener> listener = new ArrayList<>();
+        private final List<ValidationOrigin> origins = new ArrayList<>();
+        private final List<MessageListener> listeners = new ArrayList<>();
 
         public Builder() {
         }
@@ -86,22 +85,22 @@ public class ValidationResult implements AutoCloseable {
             return this;
         }
 
-        public Builder origin(ValidationOrigin origin) {
-            if (origin != null) {
-                this.origin.add(origin);
+        public Builder origin(ValidationOrigin... origins) {
+            for (ValidationOrigin origin : origins) {
+                this.origins.add(origin);
             }
             return this;
         }
 
-        public Builder listener(MessageListener listener) {
-            if (listener != null) {
-                this.listener.add(listener);
+        public Builder listener(MessageListener... listeners) {
+            for (MessageListener listener : listeners) {
+                this.listeners.add(listener);
             }
             return this;
         }
 
         public ValidationResult build() {
-            return new ValidationResult(parentResult, strm, log, origin, listener);
+            return new ValidationResult(parentResult, strm, log, origins, listeners);
         }
     }
 
