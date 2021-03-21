@@ -14,69 +14,38 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-/** Submitted file.
-*/
+import uk.ac.ebi.ena.webin.cli.validator.message.ValidationReport;
+
+/**
+ * Submitted file.
+ */
 public class SubmissionFile<FileType extends Enum<FileType>> {
 
-    private FileType fileType;
-    private File file;
+    private final FileType fileType;
+    private final File file;
+    private final ValidationReport validationReport;
+    private final List<Map.Entry<String, String>> attributes;
 
-    private List<Map.Entry<String, String>> attributes;
-
-    /** Validation messages must be written into this file.
-     */
-    private File reportFile;
-
-    public SubmissionFile(FileType fileType, File file) {
+    public SubmissionFile(FileType fileType, File file, ValidationReport validationReport) {
         this.fileType = fileType;
         this.file = file;
+        this.validationReport = validationReport;
         this.attributes = null;
-        this.reportFile = null;
     }
 
-    public SubmissionFile(FileType fileType, File file, File reportFile) {
+    public SubmissionFile(FileType fileType, File file, ValidationReport validationReport, List<Map.Entry<String, String>> attributes) {
         this.fileType = fileType;
         this.file = file;
-        this.attributes = null;
-        this.reportFile = reportFile;
-    }
-
-    public SubmissionFile(FileType fileType, File file, List<Map.Entry<String, String>> attributes) {
-        this.fileType = fileType;
-        this.file = file;
+        this.validationReport = validationReport;
         this.attributes = attributes;
-        this.reportFile = null;
-    }
-
-    public SubmissionFile(FileType fileType, File file, List<Map.Entry<String, String>> attributes, File reportFile) {
-        this.fileType = fileType;
-        this.file = file;
-        this.attributes = attributes;
-        this.reportFile = reportFile;
     }
 
     public FileType getFileType() {
         return fileType;
     }
 
-    public void setFileType(FileType fileType) {
-        this.fileType = fileType;
-    }
-
     public File getFile() {
         return file;
-    }
-
-    public void setFile(File file) {
-        this.file = file;
-    }
-
-    public File getReportFile() {
-        return reportFile;
-    }
-
-    public void setReportFile(File reportFile) {
-        this.reportFile = reportFile;
     }
 
     public boolean isFileType(FileType fileType) {
@@ -85,9 +54,5 @@ public class SubmissionFile<FileType extends Enum<FileType>> {
 
     public List<Map.Entry<String, String>> getAttributes() {
         return attributes;
-    }
-
-    public void setAttributes(List<Map.Entry<String, String>> attributes) {
-        this.attributes = attributes;
     }
 }
