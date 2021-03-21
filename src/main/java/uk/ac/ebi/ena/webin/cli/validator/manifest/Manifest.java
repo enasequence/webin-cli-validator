@@ -45,7 +45,7 @@ public abstract class Manifest <FileType extends Enum<FileType>> {
      */
     private File processDir;
 
-    /** Validation messages must be written into this directory.
+    /** Validation messages must be written into this file.
      */
     private File reportFile;
 
