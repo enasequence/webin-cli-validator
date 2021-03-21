@@ -10,21 +10,18 @@
  */
 package uk.ac.ebi.ena.webin.cli.validator.message;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import org.junit.Test;
-
 import uk.ac.ebi.ena.webin.cli.validator.message.listener.MessageCounter;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class MessageCounterTest {
 
     @Test
     public void testError() {
-        ValidationResult result = new ValidationResult();
         MessageCounter textCounter = MessageCounter.text(ValidationMessage.Severity.ERROR, "TEST");
         MessageCounter regexCounter = MessageCounter.regex(ValidationMessage.Severity.ERROR, "TEST.*");
-        result.add(textCounter);
-        result.add(regexCounter);
+        ValidationResult result = ValidationResult.builder().listener(textCounter).listener(regexCounter).build();
 
         assertThat(textCounter.getCount()).isZero();
         assertThat(regexCounter.getCount()).isZero();
@@ -52,11 +49,9 @@ public class MessageCounterTest {
 
     @Test
     public void testInfo() {
-        ValidationResult result = new ValidationResult();
         MessageCounter textCounter = MessageCounter.text(ValidationMessage.Severity.INFO, "TEST");
         MessageCounter regexCounter = MessageCounter.regex(ValidationMessage.Severity.INFO, "TEST.*");
-        result.add(textCounter);
-        result.add(regexCounter);
+        ValidationResult result = ValidationResult.builder().listener(textCounter).listener(regexCounter).build();
 
         assertThat(textCounter.getCount()).isZero();
         assertThat(regexCounter.getCount()).isZero();

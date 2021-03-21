@@ -10,6 +10,11 @@
  */
 package uk.ac.ebi.ena.webin.cli.validator.message;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import uk.ac.ebi.ena.webin.cli.validator.message.ValidationMessage.Severity;
+import uk.ac.ebi.ena.webin.cli.validator.message.listener.MessageListener;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -17,159 +22,112 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import uk.ac.ebi.ena.webin.cli.validator.message.ValidationMessage.Severity;
-import uk.ac.ebi.ena.webin.cli.validator.message.listener.MessageListener;
-
+/**
+ * Writes validation messages into a report file or forwards them to a listener.
+ */
 public class ValidationResult implements AutoCloseable {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ValidationResult.class);
+    private static final Logger logger = LoggerFactory.getLogger(ValidationResult.class);
 
-    private final OutputStream strm;
+    public static class Builder {
+        private ValidationResult parentResult;
+        private OutputStream strm;
+        private boolean log;
+        private final List<ValidationOrigin> origin = new ArrayList<>();
+        private final List<MessageListener> listener = new ArrayList<>();
+
+        public Builder() {
+        }
+
+        /**
+         * Associates this validation result with a parent. Passes validation messages with validation origins
+         * to the parent.
+         *
+         * @param parentResult the parent validation result
+         * @return this builder
+         */
+        public Builder parent(ValidationResult parentResult) {
+            this.parentResult = parentResult;
+            return this;
+        }
+
+        /**
+         * Writes validation messages to the report file.
+         *
+         * @param reportFile the report file
+         * @return this builder
+         */
+        public Builder file(File reportFile) {
+            try {
+                this.strm = (reportFile != null) ?
+                        Files.newOutputStream(
+                                reportFile.toPath(),
+                                StandardOpenOption.CREATE,
+                                StandardOpenOption.APPEND,
+                                StandardOpenOption.SYNC) : null;
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+            return this;
+        }
+
+        /**
+         * Logs validation messages.
+         *
+         * @return this builder
+         */
+        public Builder log() {
+            this.log = true;
+            return this;
+        }
+
+        public Builder origin(ValidationOrigin origin) {
+            if (origin != null) {
+                this.origin.add(origin);
+            }
+            return this;
+        }
+
+        public Builder listener(MessageListener listener) {
+            if (listener != null) {
+                this.listener.add(listener);
+            }
+            return this;
+        }
+
+        public ValidationResult build() {
+            return new ValidationResult(parentResult, strm, log, origin, listener);
+        }
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+
     private final ValidationResult parentResult;
-    private final List<ValidationOrigin> origin = new ArrayList<>();
-    private final List<MessageListener> listener = new ArrayList<>();
-    private boolean log = true;
-    private int infoCount = 0;
-    private int errorCount = 0;
+    private final OutputStream strm;
+    private final boolean log;
+    private final List<ValidationOrigin> origin;
+    private final List<MessageListener> listener;
+    private AtomicInteger infoCount = new AtomicInteger();
+    private AtomicInteger errorCount = new AtomicInteger();
 
-    /**
-     * Creates a new validation result that logs messages.
-     */
-    public ValidationResult() {
-        this.strm = null;
-        this.parentResult = null;
-    }
-
-    /**
-     * Creates a new validation result that logs messages.
-     */
-    public ValidationResult(ValidationOrigin... origin) {
-        this();
-        this.origin.addAll(Arrays.asList(origin));
-    }
-
-    public ValidationResult(ValidationResult parentResult, File reportFile, ValidationOrigin... origin) {
-        try {
-            if (reportFile != null) {
-                this.strm = Files.newOutputStream(
-                    reportFile.toPath(),
-                    StandardOpenOption.CREATE,
-                    StandardOpenOption.APPEND,
-                    StandardOpenOption.SYNC);
-            } else {
-                this.strm = null;
-            }
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
+    private ValidationResult(
+            ValidationResult parentResult,
+            OutputStream strm,
+            boolean log,
+            List<ValidationOrigin> origin,
+            List<MessageListener> listener) {
         this.parentResult = parentResult;
-        this.origin.addAll(Arrays.asList(origin));
-    }
-
-    /**
-     * Creates a new validation result that logs messages.
-     */
-    public ValidationResult(List<ValidationOrigin> origin) {
-        this();
-        this.origin.addAll(origin);
-    }
-
-    /**
-     * Creates a new validation result that writes messages
-     * to a file. By default also logs messages.
-     */
-    public ValidationResult(File reportFile) {
-        try {
-            if (reportFile != null) {
-                this.strm = Files.newOutputStream(
-                        reportFile.toPath(),
-                        StandardOpenOption.CREATE,
-                        StandardOpenOption.APPEND,
-                        StandardOpenOption.SYNC);
-            } else {
-                this.strm = null;
-            }
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
-        this.parentResult = null;
-    }
-
-    /**
-     * Creates a new validation result that writes messages
-     * to a file. By default also logs messages.
-     */
-    public ValidationResult(File reportFile, ValidationOrigin... origin) {
-        this(reportFile);
-        this.origin.addAll(Arrays.asList(origin));
-    }
-
-    /**
-     * Creates a new validation result that writes messages
-     * to a file. By default also logs messages.
-     */
-    public ValidationResult(File reportFile, List<ValidationOrigin> origin) {
-        this(reportFile);
-        this.origin.addAll(origin);
-    }
-
-    private ValidationResult(ValidationResult parentResult) {
-        this.strm = null;
-        this.parentResult = parentResult;
-    }
-
-    private ValidationResult(ValidationResult parentResult, ValidationOrigin... origin) {
-        this(parentResult);
-        this.origin.addAll(Arrays.asList(origin));
-    }
-
-    private ValidationResult(ValidationResult parentResult, List<ValidationOrigin> origin) {
-        this(parentResult);
-        this.origin.addAll(origin);
-    }
-
-    /**
-     * Creates a new validation result that is linked to this validation result.
-     */
-    public ValidationResult create() {
-        return new ValidationResult(this);
-    }
-
-    /**
-     * Creates a new validation result that is linked to this validation result.
-     */
-    public ValidationResult create(ValidationOrigin... origin) {
-        return new ValidationResult(this, origin);
-    }
-
-    /**
-     * Creates a new validation result that is linked to this validation result.
-     */
-    public ValidationResult create(List<ValidationOrigin> origin) {
-        return new ValidationResult(this, origin);
-    }
-
-    public ValidationResult create(File reportFile, ValidationOrigin... origin) {
-        return new ValidationResult(this, reportFile, origin);
-    }
-
-
-    public boolean isLog() {
-        return log;
-    }
-
-    /**
-     * Enables or disables message logging.
-     */
-    public void setLog(boolean log) {
+        this.strm = strm;
         this.log = log;
+        this.origin = origin;
+        this.listener = listener;
     }
 
     /**
@@ -180,47 +138,47 @@ public class ValidationResult implements AutoCloseable {
      */
     public ValidationResult add(ValidationMessage message) {
         if (Severity.ERROR.equals(message.getSeverity())) {
-            errorCount++;
+            errorCount.incrementAndGet();
         } else {
-            infoCount++;
+            infoCount.incrementAndGet();
         }
-        listener.forEach(l -> l.listen(message));
         message.prependOrigin(origin);
         if (parentResult != null) {
             parentResult.add(message);
+            // Delegate actions to the parent.
+            return this;
         }
+        listener.forEach(l -> l.listen(message));
         if (strm != null) {
-            report(message);
-        }
-        if (this.parentResult == null) {
-            if (this.log) {
-                log(message);
+            try {
+                String str = formatForReport(message) + "\n";
+                strm.write(str.getBytes(StandardCharsets.UTF_8));
+            } catch (IOException ex) {
+                if (!log) {
+                    log(message);
+                }
             }
+        }
+        if (log) {
+            log(message);
         }
         return this;
     }
 
-    private void report(ValidationMessage message) {
-        try {
-            String str = formatForReport(message) + "\n";
-            strm.write(str.getBytes(StandardCharsets.UTF_8));
-        } catch (IOException ex) {
-            if (!this.log) {
-                log(message);
-            }
-        }
-    }
-
     private void log(ValidationMessage message) {
-        String str = formatForLog(message);
-        if (ValidationMessage.Severity.ERROR.equals(message.getSeverity())) {
-            LOGGER.error(str);
-        } else {
-            LOGGER.info(str);
+        try {
+            String str = formatForLog(message);
+            if (ValidationMessage.Severity.ERROR.equals(message.getSeverity())) {
+                logger.error(str);
+            } else {
+                logger.info(str);
+            }
+        } catch (Exception ex) {
+            // Do nothing
         }
     }
 
-    public static String formatForLog(ValidationMessage message) {
+    static String formatForLog(ValidationMessage message) {
         String originStr = "";
         if (!message.getOrigin().isEmpty()) {
             originStr = " " + message.getOrigin().stream()
@@ -233,17 +191,9 @@ public class ValidationResult implements AutoCloseable {
                 originStr);
     }
 
-    public static String formatForReport(ValidationMessage message) {
+    static String formatForReport(ValidationMessage message) {
         return String.format("%s: %s", message.getSeverity(),
                 formatForLog(message));
-    }
-
-    /**
-     * Adds a new validation listener to the validation result.
-     */
-    public ValidationResult add(MessageListener listener) {
-        this.listener.add(listener);
-        return this;
     }
 
     /**
@@ -251,7 +201,7 @@ public class ValidationResult implements AutoCloseable {
      * any validation messages with ERROR severity.
      */
     public boolean isValid() {
-        return errorCount == 0;
+        return errorCount.get() == 0;
     }
 
     /**
@@ -259,7 +209,7 @@ public class ValidationResult implements AutoCloseable {
      * validation result.
      */
     public long count() {
-        return infoCount + errorCount;
+        return infoCount.get() + errorCount.get();
     }
 
     /**
@@ -268,9 +218,9 @@ public class ValidationResult implements AutoCloseable {
      */
     public long count(Severity severity) {
         if (Severity.ERROR.equals(severity)) {
-            return errorCount;
+            return errorCount.get();
         } else {
-            return infoCount;
+            return infoCount.get();
         }
     }
 
@@ -281,6 +231,7 @@ public class ValidationResult implements AutoCloseable {
                 strm.flush();
                 strm.close();
             } catch (IOException ex) {
+                // Do nothing
             }
         }
     }

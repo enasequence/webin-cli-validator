@@ -10,23 +10,25 @@
  */
 package uk.ac.ebi.ena.webin.cli.validator.manifest;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import uk.ac.ebi.ena.webin.cli.validator.file.SubmissionFile;
 import uk.ac.ebi.ena.webin.cli.validator.file.SubmissionFiles;
+import uk.ac.ebi.ena.webin.cli.validator.message.ValidationResult;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Analysis;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Run;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Study;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * Class with all common parameters, must be extended to create any context specific Manifest
+ *
  * @param <FileType>
  */
-public abstract class Manifest <FileType extends Enum<FileType>> {
+public abstract class Manifest<FileType extends Enum<FileType>> {
 
     private String name;
     private String description;
@@ -42,13 +44,15 @@ public abstract class Manifest <FileType extends Enum<FileType>> {
     private boolean quick;
     private boolean ignoreErrors;
 
-    /** Temporary files must written into this directory.
+    /**
+     * Temporary files must written into this directory.
      */
     private File processDir;
 
-    /** Validation messages must be written into this file.
+    /**
+     * Validation messages must be written to the validation result.
      */
-    private File reportFile;
+    private ValidationResult validationResult;
 
     public String getName() {
         return name;
@@ -158,12 +162,12 @@ public abstract class Manifest <FileType extends Enum<FileType>> {
         this.processDir = processDir;
     }
 
-    public File getReportFile() {
-        return reportFile;
+    public ValidationResult getValidationResult() {
+        return validationResult;
     }
 
-    public void setReportFile(File reportFile) {
-        this.reportFile = reportFile;
+    public void setValidationResult(ValidationResult validationResult) {
+        this.validationResult = validationResult;
     }
 
     public String getSubmissionTool() {

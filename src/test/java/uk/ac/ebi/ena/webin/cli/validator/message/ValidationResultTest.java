@@ -10,9 +10,9 @@
  */
 package uk.ac.ebi.ena.webin.cli.validator.message;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static uk.ac.ebi.ena.webin.cli.validator.message.ValidationResult.formatForLog;
-import static uk.ac.ebi.ena.webin.cli.validator.message.ValidationResult.formatForReport;
+import org.assertj.core.api.AssertionsForClassTypes;
+import org.junit.Test;
+import uk.ac.ebi.ena.webin.cli.validator.message.ValidationMessage.Severity;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -20,16 +20,15 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
-import org.assertj.core.api.AssertionsForClassTypes;
-import org.junit.Test;
-
-import uk.ac.ebi.ena.webin.cli.validator.message.ValidationMessage.Severity;
+import static org.assertj.core.api.Assertions.assertThat;
+import static uk.ac.ebi.ena.webin.cli.validator.message.ValidationResult.formatForLog;
+import static uk.ac.ebi.ena.webin.cli.validator.message.ValidationResult.formatForReport;
 
 public class ValidationResultTest {
 
     @Test
     public void testCount() {
-        ValidationResult result = new ValidationResult();
+        ValidationResult result = ValidationResult.builder().build();
 
         result.add(new ValidationMessage(Severity.ERROR, "Test"));
         assertThat(result.count()).isOne();
@@ -53,8 +52,8 @@ public class ValidationResultTest {
 
     @Test
     public void testCountParent() {
-        ValidationResult result1 = new ValidationResult();
-        ValidationResult result2 = result1.create();
+        ValidationResult result1 = ValidationResult.builder().build();
+        ValidationResult result2 = ValidationResult.builder().parent(result1).build();
 
         result2.add(new ValidationMessage(Severity.ERROR, "Test"));
         assertThat(result1.count()).isOne();
@@ -105,7 +104,7 @@ public class ValidationResultTest {
 
     @Test
     public void testIsValid() {
-        ValidationResult result = new ValidationResult();
+        ValidationResult result = ValidationResult.builder().build();
         assertThat(result.isValid()).isTrue();
         result.add(new ValidationMessage(Severity.INFO, "Test"));
         assertThat(result.isValid()).isTrue();
@@ -161,7 +160,8 @@ public class ValidationResultTest {
     public void
     testWriteReport() throws IOException {
         Path reportFile = File.createTempFile("temp", null).toPath();
-        ValidationResult result = new ValidationResult(reportFile.toFile());
+        ValidationResult result = ValidationResult.builder().file(reportFile.toFile()).build();
+
         result.add(ValidationMessage.error("MESSAGE1"));
         result.add(ValidationMessage.error("MESSAGE2"));
         result.add(ValidationMessage.info("MESSAGE3"));
@@ -178,7 +178,7 @@ public class ValidationResultTest {
         // With origin.
 
         reportFile = File.createTempFile("temp", null).toPath();
-        result = new ValidationResult(reportFile.toFile());
+        result = ValidationResult.builder().file(reportFile.toFile()).build();
 
         ValidationOrigin origin = new ValidationOrigin("ORIGIN", "TEST");
         result.add(ValidationMessage.error("MESSAGE1").appendOrigin(origin));
@@ -201,7 +201,7 @@ public class ValidationResultTest {
             ByteArrayOutputStream strm = new ByteArrayOutputStream();
             System.setErr(new PrintStream(strm));
 
-            ValidationResult result = new ValidationResult();
+            ValidationResult result = ValidationResult.builder().log().build();
             result.add(ValidationMessage.error("MESSAGE1"));
             result.add(ValidationMessage.error("MESSAGE2"));
             result.add(ValidationMessage.info("MESSAGE3"));
@@ -221,7 +221,7 @@ public class ValidationResultTest {
             strm = new ByteArrayOutputStream();
             System.setErr(new PrintStream(strm));
 
-            result = new ValidationResult();
+            result = ValidationResult.builder().log().build();
             ValidationOrigin origin = new ValidationOrigin("ORIGIN", "TEST");
             result.add(ValidationMessage.error("MESSAGE1").appendOrigin(origin));
             result.add(ValidationMessage.error("MESSAGE2").appendOrigin(origin));
