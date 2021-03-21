@@ -10,9 +10,9 @@
  */
 package uk.ac.ebi.ena.webin.cli.validator.message;
 
-import org.assertj.core.api.AssertionsForClassTypes;
-import org.junit.Test;
-import uk.ac.ebi.ena.webin.cli.validator.message.ValidationMessage.Severity;
+import static org.assertj.core.api.Assertions.assertThat;
+import static uk.ac.ebi.ena.webin.cli.validator.message.ValidationResult.formatForLog;
+import static uk.ac.ebi.ena.webin.cli.validator.message.ValidationResult.formatForReport;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -20,9 +20,10 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static uk.ac.ebi.ena.webin.cli.validator.message.ValidationResult.formatForLog;
-import static uk.ac.ebi.ena.webin.cli.validator.message.ValidationResult.formatForReport;
+import org.assertj.core.api.AssertionsForClassTypes;
+import org.junit.Test;
+
+import uk.ac.ebi.ena.webin.cli.validator.message.ValidationMessage.Severity;
 
 public class ValidationResultTest {
 

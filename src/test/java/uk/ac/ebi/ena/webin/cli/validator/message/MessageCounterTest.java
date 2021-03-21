@@ -10,10 +10,11 @@
  */
 package uk.ac.ebi.ena.webin.cli.validator.message;
 
-import org.junit.Test;
-import uk.ac.ebi.ena.webin.cli.validator.message.listener.MessageCounter;
-
 import static org.assertj.core.api.Assertions.assertThat;
+
+import org.junit.Test;
+
+import uk.ac.ebi.ena.webin.cli.validator.message.listener.MessageCounter;
 
 public class MessageCounterTest {
 
