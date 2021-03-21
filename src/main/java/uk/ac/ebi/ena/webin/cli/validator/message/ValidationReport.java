@@ -10,6 +10,11 @@
  */
 package uk.ac.ebi.ena.webin.cli.validator.message;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import uk.ac.ebi.ena.webin.cli.validator.message.ValidationMessage.Severity;
+import uk.ac.ebi.ena.webin.cli.validator.message.listener.MessageListener;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -20,12 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import uk.ac.ebi.ena.webin.cli.validator.message.ValidationMessage.Severity;
-import uk.ac.ebi.ena.webin.cli.validator.message.listener.MessageListener;
 
 /**
  * Writes validation messages into a report file or forwards them to a listener.
@@ -93,10 +92,20 @@ public class ValidationReport implements AutoCloseable {
             return this;
         }
 
+        public Builder origin(List<ValidationOrigin> origins) {
+            this.origins.addAll(origins);
+            return this;
+        }
+
         public Builder listener(MessageListener... listeners) {
             for (MessageListener listener : listeners) {
                 this.listeners.add(listener);
             }
+            return this;
+        }
+
+        public Builder listener(List<MessageListener> listeners) {
+            this.listeners.addAll(listeners);
             return this;
         }
 
