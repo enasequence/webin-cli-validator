@@ -22,28 +22,28 @@ public class MessageCounterTest {
     public void testError() {
         MessageCounter textCounter = MessageCounter.text(ValidationMessage.Severity.ERROR, "TEST");
         MessageCounter regexCounter = MessageCounter.regex(ValidationMessage.Severity.ERROR, "TEST.*");
-        ValidationResult result = ValidationResult.builder().listener(textCounter).listener(regexCounter).build();
+        ValidationReport report = ValidationReport.builder().listener(textCounter).listener(regexCounter).build();
 
         assertThat(textCounter.getCount()).isZero();
         assertThat(regexCounter.getCount()).isZero();
 
-        result.add(new ValidationMessage(ValidationMessage.Severity.INFO, "TEST"));
+        report.add(new ValidationMessage(ValidationMessage.Severity.INFO, "TEST"));
         assertThat(textCounter.getCount()).isZero();
         assertThat(regexCounter.getCount()).isZero();
 
-        result.add(new ValidationMessage(ValidationMessage.Severity.ERROR, "TEST"));
+        report.add(new ValidationMessage(ValidationMessage.Severity.ERROR, "TEST"));
         assertThat(textCounter.getCount()).isOne();
         assertThat(regexCounter.getCount()).isOne();
 
-        result.add(new ValidationMessage(ValidationMessage.Severity.ERROR, "TEST"));
+        report.add(new ValidationMessage(ValidationMessage.Severity.ERROR, "TEST"));
         assertThat(textCounter.getCount()).isEqualTo(2);
         assertThat(regexCounter.getCount()).isEqualTo(2);
 
-        result.add(new ValidationMessage(ValidationMessage.Severity.ERROR, "TEST1"));
+        report.add(new ValidationMessage(ValidationMessage.Severity.ERROR, "TEST1"));
         assertThat(textCounter.getCount()).isEqualTo(2);
         assertThat(regexCounter.getCount()).isEqualTo(3);
 
-        result.add(new ValidationMessage(ValidationMessage.Severity.ERROR, "TEST2"));
+        report.add(new ValidationMessage(ValidationMessage.Severity.ERROR, "TEST2"));
         assertThat(textCounter.getCount()).isEqualTo(2);
         assertThat(regexCounter.getCount()).isEqualTo(4);
     }
@@ -52,28 +52,28 @@ public class MessageCounterTest {
     public void testInfo() {
         MessageCounter textCounter = MessageCounter.text(ValidationMessage.Severity.INFO, "TEST");
         MessageCounter regexCounter = MessageCounter.regex(ValidationMessage.Severity.INFO, "TEST.*");
-        ValidationResult result = ValidationResult.builder().listener(textCounter).listener(regexCounter).build();
+        ValidationReport report = ValidationReport.builder().listener(textCounter).listener(regexCounter).build();
 
         assertThat(textCounter.getCount()).isZero();
         assertThat(regexCounter.getCount()).isZero();
 
-        result.add(new ValidationMessage(ValidationMessage.Severity.ERROR, "TEST"));
+        report.add(new ValidationMessage(ValidationMessage.Severity.ERROR, "TEST"));
         assertThat(textCounter.getCount()).isZero();
         assertThat(regexCounter.getCount()).isZero();
 
-        result.add(new ValidationMessage(ValidationMessage.Severity.INFO, "TEST"));
+        report.add(new ValidationMessage(ValidationMessage.Severity.INFO, "TEST"));
         assertThat(textCounter.getCount()).isOne();
         assertThat(regexCounter.getCount()).isOne();
 
-        result.add(new ValidationMessage(ValidationMessage.Severity.INFO, "TEST"));
+        report.add(new ValidationMessage(ValidationMessage.Severity.INFO, "TEST"));
         assertThat(textCounter.getCount()).isEqualTo(2);
         assertThat(regexCounter.getCount()).isEqualTo(2);
 
-        result.add(new ValidationMessage(ValidationMessage.Severity.INFO, "TEST1"));
+        report.add(new ValidationMessage(ValidationMessage.Severity.INFO, "TEST1"));
         assertThat(textCounter.getCount()).isEqualTo(2);
         assertThat(regexCounter.getCount()).isEqualTo(3);
 
-        result.add(new ValidationMessage(ValidationMessage.Severity.INFO, "TEST2"));
+        report.add(new ValidationMessage(ValidationMessage.Severity.INFO, "TEST2"));
         assertThat(textCounter.getCount()).isEqualTo(2);
         assertThat(regexCounter.getCount()).isEqualTo(4);
     }

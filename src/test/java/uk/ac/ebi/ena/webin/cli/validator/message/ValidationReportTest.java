@@ -11,8 +11,8 @@
 package uk.ac.ebi.ena.webin.cli.validator.message;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.ac.ebi.ena.webin.cli.validator.message.ValidationResult.formatForLog;
-import static uk.ac.ebi.ena.webin.cli.validator.message.ValidationResult.formatForReport;
+import static uk.ac.ebi.ena.webin.cli.validator.message.ValidationReport.formatForLog;
+import static uk.ac.ebi.ena.webin.cli.validator.message.ValidationReport.formatForReport;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -25,36 +25,36 @@ import org.junit.Test;
 
 import uk.ac.ebi.ena.webin.cli.validator.message.ValidationMessage.Severity;
 
-public class ValidationResultTest {
+public class ValidationReportTest {
 
     @Test
     public void testCount() {
-        ValidationResult result = ValidationResult.builder().build();
+        ValidationReport report = ValidationReport.builder().build();
 
-        result.add(new ValidationMessage(Severity.ERROR, "Test"));
-        assertThat(result.count()).isOne();
-        assertThat(result.count(Severity.ERROR)).isOne();
+        report.add(new ValidationMessage(Severity.ERROR, "Test"));
+        assertThat(report.count()).isOne();
+        assertThat(report.count(Severity.ERROR)).isOne();
 
-        result.add(new ValidationMessage(Severity.INFO, "Test"));
-        assertThat(result.count()).isEqualTo(2);
-        assertThat(result.count(Severity.ERROR)).isOne();
-        assertThat(result.count(Severity.INFO)).isOne();
+        report.add(new ValidationMessage(Severity.INFO, "Test"));
+        assertThat(report.count()).isEqualTo(2);
+        assertThat(report.count(Severity.ERROR)).isOne();
+        assertThat(report.count(Severity.INFO)).isOne();
 
-        result.add(new ValidationMessage(Severity.ERROR, "Test"));
-        assertThat(result.count()).isEqualTo(3);
-        assertThat(result.count(Severity.ERROR)).isEqualTo(2);
-        assertThat(result.count(Severity.INFO)).isOne();
+        report.add(new ValidationMessage(Severity.ERROR, "Test"));
+        assertThat(report.count()).isEqualTo(3);
+        assertThat(report.count(Severity.ERROR)).isEqualTo(2);
+        assertThat(report.count(Severity.INFO)).isOne();
 
-        result.add(new ValidationMessage(Severity.INFO, "Test"));
-        assertThat(result.count()).isEqualTo(4);
-        assertThat(result.count(Severity.ERROR)).isEqualTo(2);
-        assertThat(result.count(Severity.INFO)).isEqualTo(2);
+        report.add(new ValidationMessage(Severity.INFO, "Test"));
+        assertThat(report.count()).isEqualTo(4);
+        assertThat(report.count(Severity.ERROR)).isEqualTo(2);
+        assertThat(report.count(Severity.INFO)).isEqualTo(2);
     }
 
     @Test
     public void testCountParent() {
-        ValidationResult result1 = ValidationResult.builder().build();
-        ValidationResult result2 = ValidationResult.builder().parent(result1).build();
+        ValidationReport result1 = ValidationReport.builder().build();
+        ValidationReport result2 = ValidationReport.builder().parent(result1).build();
 
         result2.add(new ValidationMessage(Severity.ERROR, "Test"));
         assertThat(result1.count()).isOne();
@@ -105,12 +105,12 @@ public class ValidationResultTest {
 
     @Test
     public void testIsValid() {
-        ValidationResult result = ValidationResult.builder().build();
-        assertThat(result.isValid()).isTrue();
-        result.add(new ValidationMessage(Severity.INFO, "Test"));
-        assertThat(result.isValid()).isTrue();
-        result.add(new ValidationMessage(Severity.ERROR, "Test"));
-        assertThat(result.isValid()).isFalse();
+        ValidationReport report = ValidationReport.builder().build();
+        assertThat(report.isValid()).isTrue();
+        report.add(new ValidationMessage(Severity.INFO, "Test"));
+        assertThat(report.isValid()).isTrue();
+        report.add(new ValidationMessage(Severity.ERROR, "Test"));
+        assertThat(report.isValid()).isFalse();
     }
 
     @Test
@@ -161,13 +161,13 @@ public class ValidationResultTest {
     public void
     testWriteReport() throws IOException {
         Path reportFile = File.createTempFile("temp", null).toPath();
-        ValidationResult result = ValidationResult.builder().file(reportFile.toFile()).build();
+        ValidationReport report = ValidationReport.builder().file(reportFile.toFile()).build();
 
-        result.add(ValidationMessage.error("MESSAGE1"));
-        result.add(ValidationMessage.error("MESSAGE2"));
-        result.add(ValidationMessage.info("MESSAGE3"));
-        result.add(ValidationMessage.info("MESSAGE4"));
-        result.close();
+        report.add(ValidationMessage.error("MESSAGE1"));
+        report.add(ValidationMessage.error("MESSAGE2"));
+        report.add(ValidationMessage.info("MESSAGE3"));
+        report.add(ValidationMessage.info("MESSAGE4"));
+        report.close();
 
         List<String> lines = Files.readAllLines(reportFile);
         AssertionsForClassTypes.assertThat(lines.size()).isEqualTo(4);
@@ -179,13 +179,13 @@ public class ValidationResultTest {
         // With origin.
 
         reportFile = File.createTempFile("temp", null).toPath();
-        result = ValidationResult.builder().file(reportFile.toFile()).build();
+        report = ValidationReport.builder().file(reportFile.toFile()).build();
 
         ValidationOrigin origin = new ValidationOrigin("ORIGIN", "TEST");
-        result.add(ValidationMessage.error("MESSAGE1").appendOrigin(origin));
-        result.add(ValidationMessage.error("MESSAGE2").appendOrigin(origin));
-        result.add(ValidationMessage.info("MESSAGE3").appendOrigin(origin));
-        result.add(ValidationMessage.info("MESSAGE4").appendOrigin(origin));
+        report.add(ValidationMessage.error("MESSAGE1").appendOrigin(origin));
+        report.add(ValidationMessage.error("MESSAGE2").appendOrigin(origin));
+        report.add(ValidationMessage.info("MESSAGE3").appendOrigin(origin));
+        report.add(ValidationMessage.info("MESSAGE4").appendOrigin(origin));
 
         lines = Files.readAllLines(reportFile);
         AssertionsForClassTypes.assertThat(lines.size()).isEqualTo(4);
@@ -202,12 +202,12 @@ public class ValidationResultTest {
             ByteArrayOutputStream strm = new ByteArrayOutputStream();
             System.setErr(new PrintStream(strm));
 
-            ValidationResult result = ValidationResult.builder().log().build();
-            result.add(ValidationMessage.error("MESSAGE1"));
-            result.add(ValidationMessage.error("MESSAGE2"));
-            result.add(ValidationMessage.info("MESSAGE3"));
-            result.add(ValidationMessage.info("MESSAGE4"));
-            result.close();
+            ValidationReport report = ValidationReport.builder().log().build();
+            report.add(ValidationMessage.error("MESSAGE1"));
+            report.add(ValidationMessage.error("MESSAGE2"));
+            report.add(ValidationMessage.info("MESSAGE3"));
+            report.add(ValidationMessage.info("MESSAGE4"));
+            report.close();
 
             strm.flush();
             List<String> lines = Arrays.asList(strm.toString().split(System.lineSeparator()));
@@ -222,12 +222,12 @@ public class ValidationResultTest {
             strm = new ByteArrayOutputStream();
             System.setErr(new PrintStream(strm));
 
-            result = ValidationResult.builder().log().build();
+            report = ValidationReport.builder().log().build();
             ValidationOrigin origin = new ValidationOrigin("ORIGIN", "TEST");
-            result.add(ValidationMessage.error("MESSAGE1").appendOrigin(origin));
-            result.add(ValidationMessage.error("MESSAGE2").appendOrigin(origin));
-            result.add(ValidationMessage.info("MESSAGE3").appendOrigin(origin));
-            result.add(ValidationMessage.info("MESSAGE4").appendOrigin(origin));
+            report.add(ValidationMessage.error("MESSAGE1").appendOrigin(origin));
+            report.add(ValidationMessage.error("MESSAGE2").appendOrigin(origin));
+            report.add(ValidationMessage.info("MESSAGE3").appendOrigin(origin));
+            report.add(ValidationMessage.info("MESSAGE4").appendOrigin(origin));
 
             strm.flush();
             lines = Arrays.asList(strm.toString().split(System.lineSeparator()));

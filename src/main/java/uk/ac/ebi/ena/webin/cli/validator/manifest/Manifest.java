@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 import uk.ac.ebi.ena.webin.cli.validator.file.SubmissionFile;
 import uk.ac.ebi.ena.webin.cli.validator.file.SubmissionFiles;
-import uk.ac.ebi.ena.webin.cli.validator.message.ValidationResult;
+import uk.ac.ebi.ena.webin.cli.validator.message.ValidationReport;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Analysis;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Run;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
@@ -49,10 +49,7 @@ public abstract class Manifest<FileType extends Enum<FileType>> {
      */
     private File processDir;
 
-    /**
-     * Validation messages must be written to the validation result.
-     */
-    private ValidationResult validationResult;
+    private ValidationReport validationReport;
 
     public String getName() {
         return name;
@@ -162,12 +159,12 @@ public abstract class Manifest<FileType extends Enum<FileType>> {
         this.processDir = processDir;
     }
 
-    public ValidationResult getValidationResult() {
-        return validationResult;
+    public ValidationReport getValidationReport() {
+        return validationReport;
     }
 
-    public void setValidationResult(ValidationResult validationResult) {
-        this.validationResult = validationResult;
+    public void setValidationReport(ValidationReport validationReport) {
+        this.validationReport = validationReport;
     }
 
     public String getSubmissionTool() {

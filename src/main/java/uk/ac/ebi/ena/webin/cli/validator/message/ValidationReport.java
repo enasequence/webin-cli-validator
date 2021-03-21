@@ -29,12 +29,12 @@ import java.util.stream.Collectors;
 /**
  * Writes validation messages into a report file or forwards them to a listener.
  */
-public class ValidationResult implements AutoCloseable {
+public class ValidationReport implements AutoCloseable {
 
-    private static final Logger logger = LoggerFactory.getLogger(ValidationResult.class);
+    private static final Logger logger = LoggerFactory.getLogger(ValidationReport.class);
 
     public static class Builder {
-        private ValidationResult parentResult;
+        private ValidationReport parentReport;
         private OutputStream strm;
         private boolean log;
         private final List<ValidationOrigin> origins = new ArrayList<>();
@@ -44,14 +44,14 @@ public class ValidationResult implements AutoCloseable {
         }
 
         /**
-         * Associates this validation result with a parent. Passes validation messages with validation origins
+         * Associates this validation report with a parent. Passes validation messages with validation origins
          * to the parent.
          *
-         * @param parentResult the parent validation result
+         * @param parentResult the parent validation report
          * @return this builder
          */
-        public Builder parent(ValidationResult parentResult) {
-            this.parentResult = parentResult;
+        public Builder parent(ValidationReport parentResult) {
+            this.parentReport = parentResult;
             return this;
         }
 
@@ -99,8 +99,8 @@ public class ValidationResult implements AutoCloseable {
             return this;
         }
 
-        public ValidationResult build() {
-            return new ValidationResult(parentResult, strm, log, origins, listeners);
+        public ValidationReport build() {
+            return new ValidationReport(parentReport, strm, log, origins, listeners);
         }
     }
 
@@ -109,7 +109,7 @@ public class ValidationResult implements AutoCloseable {
     }
 
 
-    private final ValidationResult parentResult;
+    private final ValidationReport parentReport;
     private final OutputStream strm;
     private final boolean log;
     private final List<ValidationOrigin> origin;
@@ -117,13 +117,13 @@ public class ValidationResult implements AutoCloseable {
     private AtomicInteger infoCount = new AtomicInteger();
     private AtomicInteger errorCount = new AtomicInteger();
 
-    private ValidationResult(
-            ValidationResult parentResult,
+    private ValidationReport(
+            ValidationReport parentReport,
             OutputStream strm,
             boolean log,
             List<ValidationOrigin> origin,
             List<MessageListener> listener) {
-        this.parentResult = parentResult;
+        this.parentReport = parentReport;
         this.strm = strm;
         this.log = log;
         this.origin = origin;
@@ -131,20 +131,20 @@ public class ValidationResult implements AutoCloseable {
     }
 
     /**
-     * Adds a new validation message to the validation result.
+     * Adds a new validation message to the validation report.
      * The validation message will be included in all linked
      * validation results and will contain all the origins
      * associated with them.
      */
-    public ValidationResult add(ValidationMessage message) {
+    public ValidationReport add(ValidationMessage message) {
         if (Severity.ERROR.equals(message.getSeverity())) {
             errorCount.incrementAndGet();
         } else {
             infoCount.incrementAndGet();
         }
         message.prependOrigin(origin);
-        if (parentResult != null) {
-            parentResult.add(message);
+        if (parentReport != null) {
+            parentReport.add(message);
             // Delegate actions to the parent.
             return this;
         }
@@ -197,7 +197,7 @@ public class ValidationResult implements AutoCloseable {
     }
 
     /**
-     * Returns true if this validation result does not contain
+     * Returns true if this validation report does not contain
      * any validation messages with ERROR severity.
      */
     public boolean isValid() {
@@ -206,7 +206,7 @@ public class ValidationResult implements AutoCloseable {
 
     /**
      * Returns the number of validation messages in this
-     * validation result.
+     * validation report.
      */
     public long count() {
         return infoCount.get() + errorCount.get();
@@ -214,7 +214,7 @@ public class ValidationResult implements AutoCloseable {
 
     /**
      * Returns the number of validation messages in this
-     * validation result for a given severity.
+     * validation report for a given severity.
      */
     public long count(Severity severity) {
         if (Severity.ERROR.equals(severity)) {
