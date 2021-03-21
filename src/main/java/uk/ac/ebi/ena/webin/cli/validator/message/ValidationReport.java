@@ -123,8 +123,8 @@ public class ValidationReport implements AutoCloseable {
     private final ValidationReport parentReport;
     private final OutputStream strm;
     private final boolean log;
-    private final List<ValidationOrigin> origin;
-    private final List<MessageListener> listener;
+    private final List<ValidationOrigin> origins;
+    private final List<MessageListener> listeners;
     private AtomicInteger infoCount = new AtomicInteger();
     private AtomicInteger errorCount = new AtomicInteger();
 
@@ -132,13 +132,23 @@ public class ValidationReport implements AutoCloseable {
             ValidationReport parentReport,
             OutputStream strm,
             boolean log,
-            List<ValidationOrigin> origin,
-            List<MessageListener> listener) {
+            List<ValidationOrigin> origins,
+            List<MessageListener> listeners) {
         this.parentReport = parentReport;
         this.strm = strm;
         this.log = log;
-        this.origin = origin;
-        this.listener = listener;
+        this.origins = origins;
+        this.listeners = listeners;
+    }
+
+    public void addListener(MessageListener... listeners) {
+        for (MessageListener listener : listeners) {
+            this.listeners.add(listener);
+        }
+    }
+
+    public void addListener(List<MessageListener> listeners) {
+        this.listeners.addAll(listeners);
     }
 
     /**
@@ -153,9 +163,9 @@ public class ValidationReport implements AutoCloseable {
         } else {
             infoCount.incrementAndGet();
         }
-        message.prependOrigin(origin);
+        message.prependOrigin(origins);
 
-        listener.forEach(l -> l.listen(message));
+        listeners.forEach(l -> l.listen(message));
 
         if (parentReport != null) {
             parentReport.add(message);
