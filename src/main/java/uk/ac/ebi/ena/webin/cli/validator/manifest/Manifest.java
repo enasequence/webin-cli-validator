@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 EMBL - European Bioinformatics Institute
+ * Copyright 2018-2021 EMBL - European Bioinformatics Institute
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
  * file except in compliance with the License. You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -39,6 +39,7 @@ public abstract class Manifest <FileType extends Enum<FileType>> {
     private SubmissionFiles<FileType> files = new SubmissionFiles<>();
     private String submissionTool;
     private String submissionToolVersion;
+    private boolean quick;
     private boolean ignoreErrors;
 
     /** Temporary files must written into this directory.
@@ -179,5 +180,13 @@ public abstract class Manifest <FileType extends Enum<FileType>> {
 
     public void setSubmissionToolVersion(String submissionToolVersion) {
         this.submissionToolVersion = submissionToolVersion;
+    }
+
+    public boolean isQuick() {
+        return quick;
+    }
+
+    public void setQuick(boolean quick) {
+        this.quick = quick;
     }
 }
