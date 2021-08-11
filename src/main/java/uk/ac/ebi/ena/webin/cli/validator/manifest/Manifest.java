@@ -41,6 +41,8 @@ public abstract class Manifest <FileType extends Enum<FileType>> {
     private String submissionToolVersion;
     private boolean quick;
     private boolean ignoreErrors;
+    private String authToken;
+    private boolean isTestMode;
 
     /** Temporary files must written into this directory.
      */
@@ -188,5 +190,21 @@ public abstract class Manifest <FileType extends Enum<FileType>> {
 
     public void setQuick(boolean quick) {
         this.quick = quick;
+    }
+
+    public String getAuthToken() {
+        return authToken;
+    }
+
+    public void setAuthToken(String authToken) {
+        this.authToken = authToken;
+    }
+
+    public boolean getTestMode() {
+        return isTestMode;
+    }
+
+    public void setTestMode(boolean testMode) {
+        isTestMode = testMode;
     }
 }
