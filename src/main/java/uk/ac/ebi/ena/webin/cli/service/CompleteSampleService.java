@@ -28,8 +28,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-import uk.ac.ebi.ena.webin.cli.service.exception.ServiceiException;
 import uk.ac.ebi.ena.webin.cli.service.exception.ServiceMessage;
+import uk.ac.ebi.ena.webin.cli.service.exception.ServiceiException;
 import uk.ac.ebi.ena.webin.cli.service.handler.NotFoundErrorHandler;
 import uk.ac.ebi.ena.webin.cli.service.utils.HttpHeaderBuilder;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Attribute;

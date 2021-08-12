@@ -18,8 +18,8 @@ import java.io.IOException;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.ResponseErrorHandler;
 
-import uk.ac.ebi.ena.webin.cli.service.exception.ServiceiException;
 import uk.ac.ebi.ena.webin.cli.service.exception.ServiceMessage;
+import uk.ac.ebi.ena.webin.cli.service.exception.ServiceiException;
 
 public class NotFoundErrorHandler implements ResponseErrorHandler {
 
