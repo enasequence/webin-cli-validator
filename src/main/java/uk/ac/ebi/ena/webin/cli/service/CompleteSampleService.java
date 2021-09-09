@@ -78,7 +78,7 @@ public class CompleteSampleService extends WebinService
                 ServiceMessage.SAMPLE_SERVICE_SYSTEM_ERROR.format(sampleValue)));
 
         HttpHeaders headers = getAuthTokenHeader();
-        ResponseEntity response = executeHttpGetSamplerRsp(restTemplate, "cli/reference/sample/{id}", headers, sampleValue, test);
+        ResponseEntity response = executeHttpGetSampleRsp(restTemplate, "cli/reference/sample/{id}", headers, sampleValue, test);
 
         SampleResponse sampleResponse = (SampleResponse) response.getBody();
         if (sampleResponse == null || !sampleResponse.canBeReferenced) {
@@ -178,7 +178,7 @@ public class CompleteSampleService extends WebinService
                 sampleId.trim());
     }
 
-    private ResponseEntity<SampleResponse> executeHttpGetSamplerRsp(RestTemplate restTemplate,String url, HttpHeaders headers, String sampleId, boolean test){
+    private ResponseEntity<SampleResponse> executeHttpGetSampleRsp(RestTemplate restTemplate, String url, HttpHeaders headers, String sampleId, boolean test){
         return restTemplate.exchange(
                 getWebinRestUri(url, test),
                 HttpMethod.GET,
