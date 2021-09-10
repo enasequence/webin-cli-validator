@@ -53,7 +53,7 @@ public class CompleteSampleService extends WebinService
         }
     };
 
-    protected CompleteSampleService(AbstractBuilder<CompleteSampleService> builder )
+    public CompleteSampleService(AbstractBuilder<CompleteSampleService> builder )
     {
         super( builder );
     }
