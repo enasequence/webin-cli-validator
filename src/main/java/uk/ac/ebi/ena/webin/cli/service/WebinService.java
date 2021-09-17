@@ -10,6 +10,9 @@
  */
 package uk.ac.ebi.ena.webin.cli.service;
 
+import org.springframework.http.HttpHeaders;
+
+
 public class
 WebinService {
     private final static String TEST_URL = "https://wwwdev.ebi.ac.uk/ena/submit/drop-box/";
@@ -20,6 +23,12 @@ WebinService {
     private final boolean test;
 
     final String getWebinRestUri(String uri, boolean test) {
+        return (test) ?
+                TEST_URL + uri :
+                PRODUCTION_URL + uri;
+    }
+
+    final String getWebinRestUri(String uri) {
         return (test) ?
                 TEST_URL + uri :
                 PRODUCTION_URL + uri;
@@ -93,4 +102,17 @@ WebinService {
     getAuthToken() {
         return this.authToken;
     }
+
+    public HttpHeaders getAuthHeader(){
+        HttpHeaders headers = new HttpHeaders();
+        if(getAuthToken()!=null) {
+            String bearerToken = "Bearer " + getAuthToken();
+            headers.set("Authorization", bearerToken);
+        }else if(getUserName() !=null && getPassword() !=null){
+            headers.setBasicAuth(getUserName(),getPassword());
+        }
+        return headers;
+    }
+
+    
 }

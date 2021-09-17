@@ -10,20 +10,15 @@
  */
 package uk.ac.ebi.ena.webin.cli.service.exception;
 
-import uk.ac.ebi.ena.webin.cli.validator.message.source.MessageFormatSource;
-
-public enum ServiceMessage implements MessageFormatSource {
-
+public class
+ServiceException extends RuntimeException {
+    private static final long serialVersionUID = 1L;
     
-    SAMPLE_SERVICE_VALIDATION_ERROR("Unknown sample {0} or the sample cannot be referenced by your submission account. Samples must be submitted before they can be referenced in the submission.");
-    
-    private final String text;
-
-    ServiceMessage(String text) {
-        this.text = text;
+    public ServiceException( Exception ex, String messages) {
+        super(messages, ex);
     }
 
-    public String text() {
-        return text;
+    public ServiceException(String messages) {
+        super(messages);
     }
 }

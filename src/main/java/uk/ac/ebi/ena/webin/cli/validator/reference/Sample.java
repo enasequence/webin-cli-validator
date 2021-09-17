@@ -18,7 +18,7 @@ public class Sample extends Reference {
     private String bioSampleId;
     private Integer taxId;
     private String organism;
-    private String id;
+    private String sraSampleId;
 
     public String getBioSampleId() {
         return bioSampleId;
@@ -44,11 +44,11 @@ public class Sample extends Reference {
         this.organism = organism;
     }
 
-    public String getId() {
-        return id;
+    public String getSraSampleIdId() {
+        return sraSampleId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setSraSampleId(String sraSampleId) {
+        this.sraSampleId = sraSampleId;
     }
 }
