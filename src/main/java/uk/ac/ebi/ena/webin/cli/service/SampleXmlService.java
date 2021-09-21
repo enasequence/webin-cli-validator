@@ -115,6 +115,7 @@ SampleXmlService extends WebinService
     }
     
     private ResponseEntity<String>  executeHttpGet(RestTemplate restTemplate , HttpHeaders headers, String sampleId, boolean test){
+        
         return restTemplate.exchange(
                 getWebinRestUri("samples/{id}", test),
                 HttpMethod.GET,
