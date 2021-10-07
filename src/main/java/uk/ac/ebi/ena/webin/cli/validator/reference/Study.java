@@ -19,6 +19,7 @@ public class Study {
 
     private String bioProjectId;
     private List<String> locusTags;
+    private String studyId;
 
     public String getBioProjectId() {
         return bioProjectId;
@@ -38,5 +39,13 @@ public class Study {
 
     public void addLocusTag(String locusTag) {
         locusTags.add(locusTag);
+    }
+
+    public String getStudyId() {
+        return studyId;
+    }
+
+    public void setStudyId(String studyId) {
+        this.studyId = studyId;
     }
 }
