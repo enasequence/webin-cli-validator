@@ -17,9 +17,14 @@ public class
 WebinService {
     private final static String TEST_URL = "https://wwwdev.ebi.ac.uk/ena/submit/drop-box/";
     private final static String PRODUCTION_URL = "https://www.ebi.ac.uk/ena/submit/drop-box/";
+
+    private final static String TEST_SUBMISSION_URL = "https://wwwdev.ebi.ac.uk/ena/submit/webin-v2/";
+    private final static String PRODUCTION_SUBMISSION_URL = "https://www.ebi.ac.uk/ena/submit/webin-v2/";
+
     private final String userName;
     private final String password;
     private final String authToken;
+
     private final boolean test;
 
     final String getWebinRestUri(String uri, boolean test) {
@@ -32,6 +37,18 @@ WebinService {
         return (test) ?
                 TEST_URL + uri :
                 PRODUCTION_URL + uri;
+    }
+
+    final String getWebinRestSubmissionUri(String uri, boolean test) {
+        return (test) ?
+            TEST_SUBMISSION_URL + uri :
+            PRODUCTION_SUBMISSION_URL + uri;
+    }
+
+    final String getWebinRestSubmissionUri(String uri) {
+        return (test) ?
+            TEST_SUBMISSION_URL + uri :
+            PRODUCTION_SUBMISSION_URL + uri;
     }
 
     public abstract static class
