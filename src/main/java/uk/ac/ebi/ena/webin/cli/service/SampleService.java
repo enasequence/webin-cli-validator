@@ -10,19 +10,26 @@
  */
 package uk.ac.ebi.ena.webin.cli.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import uk.ac.ebi.ena.webin.cli.service.exception.ServiceException;
 import uk.ac.ebi.ena.webin.cli.service.exception.ServiceMessage;
+import uk.ac.ebi.ena.webin.cli.utils.RetryUtils;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
 
 public class 
 SampleService extends WebinService
 {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SampleService.class);
+
     protected 
     SampleService( AbstractBuilder<SampleService> builder )
     {
@@ -64,11 +71,15 @@ SampleService extends WebinService
     }
 
     private ResponseEntity<SampleResponse> executeHttpGet(RestTemplate restTemplate , HttpHeaders headers, String sampleId, boolean test){
-        return restTemplate.exchange(
+
+        return RetryUtils.executeWithRetry(
+            context -> restTemplate.exchange(
                 getWebinRestUri("cli/reference/sample/{id}", test),
                 HttpMethod.GET,
                 new HttpEntity<>(headers),
                 SampleResponse.class,
-                sampleId.trim());
+                sampleId.trim()),
+            context -> LOGGER.warn("Retrying sample retrieval from server."),
+            HttpServerErrorException.class, ResourceAccessException.class);
     }
 }

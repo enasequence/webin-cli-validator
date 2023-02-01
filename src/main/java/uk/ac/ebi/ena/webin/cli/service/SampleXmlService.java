@@ -15,10 +15,14 @@ import java.io.StringReader;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -28,12 +32,14 @@ import org.xml.sax.InputSource;
 
 import uk.ac.ebi.ena.webin.cli.service.exception.ServiceException;
 import uk.ac.ebi.ena.webin.cli.service.exception.ServiceMessage;
+import uk.ac.ebi.ena.webin.cli.utils.RetryUtils;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Attribute;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
 
 public class
 SampleXmlService extends WebinService
 {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SampleXmlService.class);
     
     public static class 
     Builder extends AbstractBuilder<SampleXmlService>
@@ -117,12 +123,15 @@ SampleXmlService extends WebinService
     }
     
     private ResponseEntity<String>  executeHttpGet(RestTemplate restTemplate , HttpHeaders headers, String sampleId, boolean test){
-        
-        return restTemplate.exchange(
+
+        return RetryUtils.executeWithRetry(
+            context -> restTemplate.exchange(
                 getWebinRestUri("samples/{id}", test),
                 HttpMethod.GET,
                 new HttpEntity<>(headers),
                 String.class,
-                sampleId.trim());
+                sampleId.trim()),
+            context -> LOGGER.warn("Retrying sample xml retrieval from server."),
+            HttpServerErrorException.class, ResourceAccessException.class);
     }
 }
