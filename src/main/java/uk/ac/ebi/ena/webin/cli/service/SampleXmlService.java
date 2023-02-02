@@ -40,6 +40,8 @@ public class
 SampleXmlService extends WebinService
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(SampleXmlService.class);
+
+    public static final String SERVICE_NAME = "SampleXml";
     
     public static class 
     Builder extends AbstractBuilder<SampleXmlService>

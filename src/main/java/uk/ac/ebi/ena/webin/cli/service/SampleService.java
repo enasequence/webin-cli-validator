@@ -30,6 +30,8 @@ SampleService extends WebinService
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(SampleService.class);
 
+    public static final String SERVICE_NAME = "Sample";
+
     protected 
     SampleService( AbstractBuilder<SampleService> builder )
     {
