@@ -20,7 +20,7 @@ import org.springframework.retry.support.RetryTemplateBuilder;
 public class RetryUtils {
 
     /**
-     * Create a default retry template that does a total of 6 attempts (1 initial try + 5 failure retries) with wait times
+     * Create a default retry template that does a total of 7 attempts (1 initial try + 6 failure retries) with wait times
      * of 1s before 1st retry, 3s before 2nd and then 5s before remaining retries when given errors occur.
      *
      * @param retryOnErrors
@@ -28,8 +28,8 @@ public class RetryUtils {
      */
     public static RetryTemplate createDefaultRetryTemplate(Class<? extends Exception>... retryOnErrors) {
         RetryTemplateBuilder builder = RetryTemplate.builder()
-            .maxAttempts(6)
-            .exponentialBackoff(1000, 3, 5_000); // 1s, 3s, 5s, 5s, 5s
+            .maxAttempts(7)
+            .exponentialBackoff(1000, 3, 5_000); // 1s, 3s, 5s, 5s, 5s, 5s
 
         if (retryOnErrors != null) {
             for (int i = 0; i < retryOnErrors.length; i++) {
