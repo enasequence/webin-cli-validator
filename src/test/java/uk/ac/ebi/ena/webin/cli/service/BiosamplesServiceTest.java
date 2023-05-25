@@ -24,7 +24,7 @@ public class BiosamplesServiceTest {
 
     final WebinAuthClientService webinAuthClientService = new WebinAuthClientService(
         new RestTemplateBuilder(),
-        URI.create("https://www.ebi.ac.uk/ena/submit/webin/auth/token"),
+        URI.create("https://wwwdev.ebi.ac.uk/ena/submit/webin/auth/token"),
         "Webin-256",
         "sausages",
         Arrays.asList(AuthRealm.ENA)

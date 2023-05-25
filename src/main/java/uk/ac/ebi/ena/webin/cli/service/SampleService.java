@@ -38,6 +38,9 @@ SampleService extends WebinService
 
     public static final String SERVICE_NAME = "Sample";
 
+    private final static String TEST_AUTH_URL = "https://wwwdev.ebi.ac.uk/ena/submit/webin/auth/token";
+    private final static String PRODUCTION_AUTH_URL = "https://www.ebi.ac.uk/ena/submit/webin/auth/token";
+
     public static final String BIOSAMPLES_ID_PREFIX = "SAM";
 
     public final BiosamplesService biosamplesService = new BiosamplesService();
@@ -56,38 +59,37 @@ SampleService extends WebinService
             return new SampleService(this);
         }
     }
-    
+
+    /**
+     * Depending on what the given sample ID looks like, sample information will be retrieved from either ENA or Biosamples.
+     * Also, if the sample is not found on Biosamples then an attempt will be made to retrieve it from ENA.
+     */
     public Sample getSample(String sampleId) {
+        Sample sample = null;
+
         if (sampleId.toUpperCase().startsWith(BIOSAMPLES_ID_PREFIX)) {
-            return getBiosamplesSample(sampleId);
-        } else {
-            return getSraSample(sampleId);
-        }
-    }
-
-    public static Sample convert(uk.ac.ebi.biosamples.model.Sample biosamplesSample) {
-        if (biosamplesSample == null) {
-            return null;
+            sample = getBiosamplesSample(sampleId);
         }
 
-        Sample sample = new Sample();
-        sample.setBioSampleId(biosamplesSample.getAccession());
-        sample.setTaxId(biosamplesSample.getTaxId().intValue());
-        sample.setOrganism(biosamplesSample.getAttributes().stream()
-            .filter(attr -> attr.getType().equals("organism"))
-            .findFirst().map(attr -> attr.getValue())
-            .get());
+        // If, either, sample is not found on Biosamples or has incomplete metadata (e.g. Tax ID) then it most likely
+        // means Biosamples is not the authority on it. In which case, load the sample from ENA.
+        if (sample == null || sample.getTaxId() == null) {
+            sample = getSraSample(sampleId);
+        }
 
         return sample;
     }
 
     private Sample getSraSample(String sampleId) {
         RestTemplate restTemplate = new RestTemplate();
+
         ResponseEntity<SampleResponse> response = executeHttpGet( restTemplate ,  getAuthHeader(),  sampleId,  getTest());
+
         SampleResponse sampleResponse = response.getBody();
         if (sampleResponse == null || !sampleResponse.canBeReferenced) {
             throw new ServiceException(ServiceMessage.SAMPLE_SERVICE_VALIDATION_ERROR.format(sampleId));
         }
+
         Sample sample = new Sample();
         sample.setBioSampleId(sampleResponse.bioSampleId);
         sample.setTaxId(sampleResponse.taxId);
@@ -98,20 +100,45 @@ SampleService extends WebinService
     }
 
     private Sample getBiosamplesSample(String sampleId) {
+        String authToken = getAuthToken();
+        if (authToken == null) {
+            authToken = generateAuthToken();
+        }
+
+        uk.ac.ebi.biosamples.model.Sample biosamplesSample = biosamplesService.findSampleById(sampleId, authToken);
+        if (biosamplesSample == null) {
+            return null;
+        }
+
+        Sample sample = new Sample();
+        sample.setBioSampleId(biosamplesSample.getAccession());
+        sample.setTaxId(biosamplesSample.getTaxId() == null ? null : biosamplesSample.getTaxId().intValue());
+        sample.setOrganism(biosamplesSample.getAttributes().stream()
+            .filter(attr -> attr.getType().equals("organism"))
+            .findFirst().map(attr -> attr.getValue())
+            .orElse(null));
+
+        return sample;
+    }
+
+    private String generateAuthToken() {
+        String authUrl = getTest() ? TEST_AUTH_URL : PRODUCTION_AUTH_URL;
+
         WebinAuthClientService webinAuthClientService = new WebinAuthClientService(
             new RestTemplateBuilder(),
-            URI.create("https://www.ebi.ac.uk/ena/submit/webin/auth/token"),
+            URI.create(authUrl),
             getUserName(),
             getPassword(),
             Arrays.asList(AuthRealm.ENA));
 
-        uk.ac.ebi.biosamples.model.Sample biosamplesSample = biosamplesService.findSampleById(
-            sampleId, webinAuthClientService.getJwt());
-
-        return convert(biosamplesSample);
+        return RetryUtils.executeWithRetry(
+            context -> webinAuthClientService.getJwt(),
+            context -> LOGGER.warn("Retrying acquiring authentication token."),
+            HttpServerErrorException.class, ResourceAccessException.class);
     }
 
-    private ResponseEntity<SampleResponse> executeHttpGet(RestTemplate restTemplate , HttpHeaders headers, String sampleId, boolean test){
+    private ResponseEntity<SampleResponse> executeHttpGet(
+        RestTemplate restTemplate , HttpHeaders headers, String sampleId, boolean test){
 
         return RetryUtils.executeWithRetry(
             context -> restTemplate.exchange(

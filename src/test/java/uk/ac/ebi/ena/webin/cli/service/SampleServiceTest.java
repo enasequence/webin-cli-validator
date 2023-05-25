@@ -54,6 +54,24 @@ SampleServiceTest {
         sampleService.getSample( id );
     }
 
+    @Test
+    public void testPreNov22PrivateSampleRetrieval() {
+        // This is a private Pre Nov 2022 sample whose authority is ENA not Biosamples.
+        String id = "SAMEA9403245";
+
+        SampleService sampleService = new SampleService.Builder()
+            .setUserName( "Webin-256" )
+            .setPassword( "sausages" )
+            .setTest( TEST )
+            .build();
+
+        Sample sample = sampleService.getSample( id );
+
+        assertThat(sample).isNotNull();
+        assertThat(sample.getTaxId()).isEqualTo(9606);
+        assertThat(sample.getOrganism()).isEqualTo("Homo sapiens");
+    }
+
     private void testGetSampleUsingValidId(String id) {
         SampleService sampleService = new SampleService.Builder()
                                                         .setUserName( "webin-256" )

@@ -44,7 +44,10 @@ public class Sample extends Reference {
         this.organism = organism;
     }
 
-    public String getSraSampleIdId() {
+    /**
+     * This will be null if the sample was retrieved from Biosamples.
+     */
+    public String getSraSampleId() {
         return sraSampleId;
     }
 
