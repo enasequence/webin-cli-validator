@@ -62,7 +62,7 @@ SampleService extends WebinService
 
     /**
      * Depending on what the given sample ID looks like, sample information will be retrieved from either ENA or Biosamples.
-     * Also, if the sample is not found on Biosamples then an attempt will be made to retrieve it from ENA.
+     * Also, if the sample is not retrieved from Biosamples then an attempt will be made to retrieve it from ENA.
      */
     public Sample getSample(String sampleId) {
         Sample sample = null;
@@ -71,8 +71,8 @@ SampleService extends WebinService
             sample = getBiosamplesSample(sampleId);
         }
 
-        // If, either, sample is not found on Biosamples or has incomplete metadata (e.g. Tax ID) then it most likely
-        // means Biosamples is not the authority on it. In which case, load the sample from ENA.
+        // If, either, sample is not found on Biosamples or has incomplete metadata (e.g. Tax ID) then load the sample
+        // from ENA.
         if (sample == null || sample.getTaxId() == null) {
             sample = getSraSample(sampleId);
         }
