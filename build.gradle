@@ -55,7 +55,7 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-api:2.16.0")
     implementation("org.apache.logging.log4j:log4j-to-slf4j:2.16.0")
 
-    implementation ('uk.ac.ebi.biosamples:client:5.2.14-RC1') {
+    compile( 'uk.ac.ebi.biosamples:client:5.2.14-RC1') {
         exclude group: 'org.bouncycastle'
         exclude group: 'asm'
         exclude group: 'org.ow2.asm', module: 'asm'
@@ -135,5 +135,19 @@ publishing {
                 header(HttpHeaderAuthentication)
             }
         }
+    }
+}
+
+test {
+    if( System.env.webin_cli_password ) {
+        environment 'webin-cli-password', System.env.webin_cli_password
+    } else {
+        environment 'webin-cli-password', webinCliPassword
+    }
+
+    if( System.env.webin_cli_username ) {
+        environment 'webin-cli-username', System.env.webin_cli_username
+    } else {
+        environment 'webin-cli-username', webinCliUsername
     }
 }

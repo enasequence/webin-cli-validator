@@ -24,9 +24,9 @@ public class BiosamplesServiceTest {
 
     final WebinAuthClientService webinAuthClientService = new WebinAuthClientService(
         new RestTemplateBuilder(),
-        URI.create("https://wwwdev.ebi.ac.uk/ena/submit/webin/auth/token"),
-        "Webin-256",
-        "sausages",
+        URI.create(SampleService.WEBIN_AUTH_TEST_URL),
+        System.getenv("webin-cli-username"),
+        System.getenv("webin-cli-password"),
         Arrays.asList(AuthRealm.ENA)
     );
 

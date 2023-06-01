@@ -20,35 +20,43 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
-
 import uk.ac.ebi.biosamples.client.model.auth.AuthRealm;
 import uk.ac.ebi.biosamples.client.service.WebinAuthClientService;
 import uk.ac.ebi.ena.webin.cli.service.exception.ServiceException;
 import uk.ac.ebi.ena.webin.cli.service.exception.ServiceMessage;
 import uk.ac.ebi.ena.webin.cli.utils.RetryUtils;
+import uk.ac.ebi.ena.webin.cli.validator.reference.Attribute;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class 
 SampleService extends WebinService
 {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SampleService.class);
-
     public static final String SERVICE_NAME = "Sample";
-
-    private final static String TEST_AUTH_URL = "https://wwwdev.ebi.ac.uk/ena/submit/webin/auth/token";
-    private final static String PRODUCTION_AUTH_URL = "https://www.ebi.ac.uk/ena/submit/webin/auth/token";
 
     public static final String BIOSAMPLES_ID_PREFIX = "SAM";
 
-    public final BiosamplesService biosamplesService = new BiosamplesService();
+    private static final Logger LOGGER = LoggerFactory.getLogger(SampleService.class);
+
+    private final BiosamplesService biosamplesService = new BiosamplesService();
+
+    private final SampleXmlService sampleXmlService;
 
     protected 
     SampleService( AbstractBuilder<SampleService> builder )
     {
         super( builder );
+
+        sampleXmlService = new SampleXmlService.Builder()
+            .setAuthToken(getAuthToken())
+            .setUserName(getUserName())
+            .setPassword(getPassword())
+            .setTest(getTest())
+            .build();
     }
 
     public static class
@@ -65,21 +73,43 @@ SampleService extends WebinService
      * Also, if the sample is not retrieved from Biosamples then an attempt will be made to retrieve it from ENA.
      */
     public Sample getSample(String sampleId) {
-        Sample sample = null;
-
-        if (sampleId.toUpperCase().startsWith(BIOSAMPLES_ID_PREFIX)) {
-            sample = getBiosamplesSample(sampleId);
+        if (isBiosamplesId(sampleId)) {
+            Sample biosamplesSample = getBiosamplesSample(sampleId);
+            if (isBiosamplesSampleValid(biosamplesSample)) {
+                return biosamplesSample;
+            }
         }
 
-        // If, either, sample is not found on Biosamples or has incomplete metadata (e.g. Tax ID) then load the sample
-        // from ENA.
-        if (sample == null || sample.getTaxId() == null) {
-            sample = getSraSample(sampleId);
+        // If the sample couldn't be retrieved from Biosamples above then retrieve it from ENA.
+        Sample sraSample = getSraSample(sampleId);
+        if (sraSample == null) {
+            return null;
         }
 
-        return sample;
+        // If SRA sample has a Biosamples accession then retrieve it from Biosamples using this accession. This is
+        // becuase getting samples data from Biosamples is always preferred.
+        if (sraSample.getBioSampleId() != null) {
+            Sample biosamplesSample = getBiosamplesSample(sraSample.getBioSampleId());
+            if (isBiosamplesSampleValid(biosamplesSample)) {
+                return biosamplesSample;
+            }
+        }
+
+        // Getting here means we couldn't get sample from Biosamples. So return the SRA sample instead after adding
+        // attribute information to it.
+        Sample sampleFromXml = sampleXmlService.getSample(sraSample.getSraSampleId());
+        sraSample.setAttributes(sampleFromXml.getAttributes());
+
+        return sraSample;
     }
 
+    public static boolean isBiosamplesId(String biosampleId) {
+        return biosampleId.toUpperCase().startsWith(BIOSAMPLES_ID_PREFIX);
+    }
+
+    /**
+     * Returned sample will not have attribute information.
+     */
     private Sample getSraSample(String sampleId) {
         RestTemplate restTemplate = new RestTemplate();
 
@@ -99,6 +129,9 @@ SampleService extends WebinService
         return sample;
     }
 
+    /**
+     * Returned sample will contain attribute information as well.
+     */
     private Sample getBiosamplesSample(String sampleId) {
         String authToken = getAuthToken();
         if (authToken == null) {
@@ -118,11 +151,31 @@ SampleService extends WebinService
             .findFirst().map(attr -> attr.getValue())
             .orElse(null));
 
+        List<Attribute> attributes = new ArrayList<>();
+        biosamplesSample.getAttributes().forEach(biosamplesAttribute -> {
+            String type = biosamplesAttribute.getType();
+            if (type != null && !type.isEmpty())
+                attributes.add(new Attribute(type, biosamplesAttribute.getValue()));
+        });
+
+        sample.setAttributes(attributes);
+
         return sample;
     }
 
+    /**
+     * @return false if given Biosample sample is either null or has incomplete information i.e. Tax ID. True otherwise.
+     */
+    private boolean isBiosamplesSampleValid(Sample sample) {
+        if (sample == null || sample.getTaxId() == null) {
+            return false;
+        }
+
+        return true;
+    }
+
     private String generateAuthToken() {
-        String authUrl = getTest() ? TEST_AUTH_URL : PRODUCTION_AUTH_URL;
+        String authUrl = getTest() ? WEBIN_AUTH_TEST_URL : WEBIN_AUTH_PROD_URL;
 
         WebinAuthClientService webinAuthClientService = new WebinAuthClientService(
             new RestTemplateBuilder(),

@@ -15,11 +15,14 @@ import org.springframework.http.HttpHeaders;
 
 public class
 WebinService {
-    private final static String TEST_URL = "https://wwwdev.ebi.ac.uk/ena/submit/drop-box/";
-    private final static String PRODUCTION_URL = "https://www.ebi.ac.uk/ena/submit/drop-box/";
+    public final static String WEBIN_REST_V1_TEST_URL = "https://wwwdev.ebi.ac.uk/ena/submit/drop-box/";
+    public final static String WEBIN_REST_V1_PROD_URL = "https://www.ebi.ac.uk/ena/submit/drop-box/";
 
-    private final static String TEST_SUBMISSION_URL = "https://wwwdev.ebi.ac.uk/ena/submit/webin-v2/";
-    private final static String PRODUCTION_SUBMISSION_URL = "https://www.ebi.ac.uk/ena/submit/webin-v2/";
+    public final static String WEBIN_REST_V2_TEST_URL = "https://wwwdev.ebi.ac.uk/ena/submit/webin-v2/";
+    public final static String WEBIN_REST_V2_PROD_URL = "https://www.ebi.ac.uk/ena/submit/webin-v2/";
+
+    public final static String WEBIN_AUTH_TEST_URL = "https://wwwdev.ebi.ac.uk/ena/submit/webin/auth/token";
+    public final static String WEBIN_AUTH_PROD_URL = "https://www.ebi.ac.uk/ena/submit/webin/auth/token";
 
     private final String userName;
     private final String password;
@@ -29,26 +32,26 @@ WebinService {
 
     final String getWebinRestUri(String uri, boolean test) {
         return (test) ?
-                TEST_URL + uri :
-                PRODUCTION_URL + uri;
+                WEBIN_REST_V1_TEST_URL + uri :
+                WEBIN_REST_V1_PROD_URL + uri;
     }
 
     final String getWebinRestUri(String uri) {
         return (test) ?
-                TEST_URL + uri :
-                PRODUCTION_URL + uri;
+                WEBIN_REST_V1_TEST_URL + uri :
+                WEBIN_REST_V1_PROD_URL + uri;
     }
 
     final String getWebinRestSubmissionUri(String uri, boolean test) {
         return (test) ?
-            TEST_SUBMISSION_URL + uri :
-            PRODUCTION_SUBMISSION_URL + uri;
+            WEBIN_REST_V2_TEST_URL + uri :
+            WEBIN_REST_V2_PROD_URL + uri;
     }
 
     final String getWebinRestSubmissionUri(String uri) {
         return (test) ?
-            TEST_SUBMISSION_URL + uri :
-            PRODUCTION_SUBMISSION_URL + uri;
+            WEBIN_REST_V2_TEST_URL + uri :
+            WEBIN_REST_V2_PROD_URL + uri;
     }
 
     public abstract static class

@@ -22,6 +22,9 @@ import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
 public class
 SampleServiceTest {
 
+    private static final String WEBIN_ACCOUNT_USERNAME = System.getenv("webin-cli-username");
+    private static final String WEBIN_ACCOUNT_PASSWORD = System.getenv("webin-cli-password");
+
     private static final boolean TEST = true;
 
     private static final String BIO_SAMPLE_ID = "SAMEA749881";
@@ -47,21 +50,23 @@ SampleServiceTest {
         String id = "INVALID";
         exceptionRule.expect(HttpClientErrorException.NotFound.class);
         SampleService sampleService = new SampleService.Builder()
-                                                       .setUserName( "webin-256" )
-                                                       .setPassword( "sausages" )
+                                                       .setUserName( WEBIN_ACCOUNT_USERNAME )
+                                                       .setPassword( WEBIN_ACCOUNT_PASSWORD )
                                                        .setTest( TEST )
                                                        .build();
         sampleService.getSample( id );
     }
 
     @Test
-    public void testPreNov22PrivateSampleRetrieval() {
-        // This is a private Pre Nov 2022 sample whose authority is ENA not Biosamples.
+    public void testSampleRetrievalFallback() {
+        // This ID represents a sample which is private and does not contain full information on Biosamples. It offers
+        // a nice opportunity to test ENA fallback i.e. if sample cannot be retrieved from Biosamples then it
+        // will be retrieved from ENA instead.
         String id = "SAMEA9403245";
 
         SampleService sampleService = new SampleService.Builder()
-            .setUserName( "Webin-256" )
-            .setPassword( "sausages" )
+            .setUserName( WEBIN_ACCOUNT_USERNAME )
+            .setPassword( WEBIN_ACCOUNT_PASSWORD )
             .setTest( TEST )
             .build();
 
@@ -72,10 +77,16 @@ SampleServiceTest {
         assertThat(sample.getOrganism()).isEqualTo("Homo sapiens");
     }
 
+    @Test
+    public void testSampleIdIsBiosamplesId() {
+        assertThat(SampleService.isBiosamplesId(BIO_SAMPLE_ID)).isTrue();
+        assertThat(SampleService.isBiosamplesId(SAMPLE_ID)).isFalse();
+    }
+
     private void testGetSampleUsingValidId(String id) {
         SampleService sampleService = new SampleService.Builder()
-                                                        .setUserName( "webin-256" )
-                                                        .setPassword( "sausages" )
+                                                        .setUserName( WEBIN_ACCOUNT_USERNAME )
+                                                        .setPassword( WEBIN_ACCOUNT_PASSWORD )
                                                        .setTest( TEST )
                                                        .build();
         Sample sample = sampleService.getSample( id );

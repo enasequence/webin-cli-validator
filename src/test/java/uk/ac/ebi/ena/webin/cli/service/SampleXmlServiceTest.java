@@ -23,6 +23,9 @@ import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
 public class
 SampleXmlServiceTest {
 
+    private static final String WEBIN_ACCOUNT_USERNAME = System.getenv("webin-cli-username");
+    private static final String WEBIN_ACCOUNT_PASSWORD = System.getenv("webin-cli-password");
+
     private static final boolean TEST = true;
 
     private static final String BIO_SAMPLE_ID = "SAMEA749881";
@@ -49,8 +52,8 @@ SampleXmlServiceTest {
         String id = "INVALID";
         exceptionRule.expect(HttpClientErrorException.NotFound.class);
         SampleXmlService sampleService = new SampleXmlService.Builder()
-                                                                     .setUserName( "webin-256" )
-                                                                     .setPassword( "sausages" )
+                                                                     .setUserName( WEBIN_ACCOUNT_USERNAME )
+                                                                     .setPassword( WEBIN_ACCOUNT_PASSWORD )
                                                                      .setTest( TEST )
                                                                      .build();
         sampleService.getSample(id);
@@ -58,8 +61,8 @@ SampleXmlServiceTest {
 
     private void testGetSourceFeatureUsingValidId(String id) {
         SampleXmlService sampleService = new SampleXmlService.Builder()
-                                                                     .setUserName( "webin-256"  )
-                                                                     .setPassword( "sausages" )
+                                                                     .setUserName( WEBIN_ACCOUNT_USERNAME  )
+                                                                     .setPassword( WEBIN_ACCOUNT_PASSWORD )
                                                                      .setTest( TEST )
                                                                      .build();
         Sample sample = sampleService.getSample( id );

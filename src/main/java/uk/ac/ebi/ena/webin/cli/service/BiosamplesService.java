@@ -30,11 +30,13 @@ public class BiosamplesService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BiosamplesService.class);
 
+    public static final String BIOSAMPLES_URL = "https://www.ebi.ac.uk/biosamples/";
+
     private final BioSamplesClient bioSamplesClient;
 
     public BiosamplesService() {
         bioSamplesClient = new BioSamplesClient(
-            URI.create("https://www.ebi.ac.uk/biosamples/"),
+            URI.create(BIOSAMPLES_URL),
             null,
             new RestTemplateBuilder(),
             new SampleValidator(new AttributeValidator()),
@@ -43,7 +45,7 @@ public class BiosamplesService {
     }
 
     public Sample findSampleById(String accession, String webinAuthToken) {
-        if (webinAuthToken == null) {
+        if (webinAuthToken == null || webinAuthToken.isEmpty()) {
             throw new ServiceException("Invalid webin authentication token.");
         }
 
@@ -95,11 +97,6 @@ public class BiosamplesService {
             @Override
             public boolean getAgentSolrStayalive() {
                 return false;
-            }
-
-            @Override
-            public String getOls() {
-                return "https://wwwdev.ebi.ac.uk/ols";
             }
         };
     }
