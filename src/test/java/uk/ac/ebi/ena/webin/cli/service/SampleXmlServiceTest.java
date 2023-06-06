@@ -23,8 +23,8 @@ import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
 public class
 SampleXmlServiceTest {
 
-    private static final String WEBIN_ACCOUNT_USERNAME = System.getenv("webin-cli-username");
-    private static final String WEBIN_ACCOUNT_PASSWORD = System.getenv("webin-cli-password");
+    private static final String WEBIN_ACCOUNT_USERNAME = System.getenv("webin-username");
+    private static final String WEBIN_ACCOUNT_PASSWORD = System.getenv("webin-password");
 
     private static final boolean TEST = true;
 

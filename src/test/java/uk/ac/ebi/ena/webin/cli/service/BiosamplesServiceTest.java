@@ -25,8 +25,8 @@ public class BiosamplesServiceTest {
     final WebinAuthClientService webinAuthClientService = new WebinAuthClientService(
         new RestTemplateBuilder(),
         URI.create(SampleService.WEBIN_AUTH_TEST_URL),
-        System.getenv("webin-cli-username"),
-        System.getenv("webin-cli-password"),
+        System.getenv("biosamples-webin-username"),
+        System.getenv("biosamples-webin-password"),
         Arrays.asList(AuthRealm.ENA)
     );
 

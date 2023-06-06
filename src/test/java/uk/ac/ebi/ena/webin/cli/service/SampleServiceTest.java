@@ -22,8 +22,11 @@ import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
 public class
 SampleServiceTest {
 
-    private static final String WEBIN_ACCOUNT_USERNAME = System.getenv("webin-cli-username");
-    private static final String WEBIN_ACCOUNT_PASSWORD = System.getenv("webin-cli-password");
+    private static final String WEBIN_ACCOUNT_USERNAME = System.getenv("webin-username");
+    private static final String WEBIN_ACCOUNT_PASSWORD = System.getenv("webin-password");
+
+    private static final String BIOSAMPLES_WEBIN_ACCOUNT_USERNAME = System.getenv("biosamples-webin-username");
+    private static final String BIOSAMPLES_WEBIN_ACCOUNT_PASSWORD = System.getenv("biosamples-webin-password");
 
     private static final boolean TEST = true;
 
@@ -52,6 +55,8 @@ SampleServiceTest {
         SampleService sampleService = new SampleService.Builder()
                                                        .setUserName( WEBIN_ACCOUNT_USERNAME )
                                                        .setPassword( WEBIN_ACCOUNT_PASSWORD )
+                                                       .setBiosamplesWebinUserName(BIOSAMPLES_WEBIN_ACCOUNT_USERNAME)
+                                                       .setBiosamplesWebinPassword(BIOSAMPLES_WEBIN_ACCOUNT_PASSWORD)
                                                        .setTest( TEST )
                                                        .build();
         sampleService.getSample( id );
@@ -67,6 +72,8 @@ SampleServiceTest {
         SampleService sampleService = new SampleService.Builder()
             .setUserName( WEBIN_ACCOUNT_USERNAME )
             .setPassword( WEBIN_ACCOUNT_PASSWORD )
+            .setBiosamplesWebinUserName(BIOSAMPLES_WEBIN_ACCOUNT_USERNAME)
+            .setBiosamplesWebinPassword(BIOSAMPLES_WEBIN_ACCOUNT_PASSWORD)
             .setTest( TEST )
             .build();
 
@@ -85,8 +92,10 @@ SampleServiceTest {
 
     private void testGetSampleUsingValidId(String id) {
         SampleService sampleService = new SampleService.Builder()
-                                                        .setUserName( WEBIN_ACCOUNT_USERNAME )
-                                                        .setPassword( WEBIN_ACCOUNT_PASSWORD )
+                                                       .setUserName( WEBIN_ACCOUNT_USERNAME )
+                                                       .setPassword( WEBIN_ACCOUNT_PASSWORD )
+                                                       .setBiosamplesWebinUserName(BIOSAMPLES_WEBIN_ACCOUNT_USERNAME)
+                                                       .setBiosamplesWebinPassword(BIOSAMPLES_WEBIN_ACCOUNT_PASSWORD)
                                                        .setTest( TEST )
                                                        .build();
         Sample sample = sampleService.getSample( id );

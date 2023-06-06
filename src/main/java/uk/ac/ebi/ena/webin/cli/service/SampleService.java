@@ -42,14 +42,26 @@ SampleService extends WebinService
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SampleService.class);
 
-    private final BiosamplesService biosamplesService = new BiosamplesService();
+    private final String biosamplesWebinUserName;
+    private final String biosamplesWebinPassword;
+
+    private final WebinAuthClientService webinAuthClientService;
+
+    private final BiosamplesService biosamplesService;
 
     private final SampleXmlService sampleXmlService;
 
     protected 
-    SampleService( AbstractBuilder<SampleService> builder )
+    SampleService( Builder builder )
     {
         super( builder );
+
+        this.biosamplesWebinUserName = builder.biosamplesWebinUserName;
+        this.biosamplesWebinPassword = builder.biosamplesWebinPassword;
+
+        webinAuthClientService = createWebinAuthClientService();
+
+        biosamplesService = new BiosamplesService();
 
         sampleXmlService = new SampleXmlService.Builder()
             .setAuthToken(getAuthToken())
@@ -61,6 +73,49 @@ SampleService extends WebinService
 
     public static class
     Builder extends AbstractBuilder<SampleService> {
+        protected String biosamplesWebinUserName;
+        protected String biosamplesWebinPassword;
+
+        @Override
+        public Builder setUserName(String userName) {
+            super.setUserName(userName);
+            return this;
+        }
+
+        @Override
+        public Builder setPassword(String password) {
+            super.setPassword(password);
+            return this;
+        }
+
+        @Override
+        public Builder setCredentials(String userName, String password) {
+            super.setCredentials(userName, password);
+            return this;
+        }
+
+        @Override
+        public Builder setTest(boolean test) {
+            super.setTest(test);
+            return this;
+        }
+
+        @Override
+        public Builder setAuthToken(String authToken) {
+            super.setAuthToken(authToken);
+            return this;
+        }
+
+        public Builder setBiosamplesWebinUserName(String biosamplesWebinUserName) {
+            this.biosamplesWebinUserName = biosamplesWebinUserName;
+            return this;
+        }
+
+        public Builder setBiosamplesWebinPassword(String biosamplesWebinPassword) {
+            this.biosamplesWebinPassword = biosamplesWebinPassword;
+            return this;
+        }
+
         @Override
         public SampleService
         build() {
@@ -133,12 +188,8 @@ SampleService extends WebinService
      * Returned sample will contain attribute information as well.
      */
     private Sample getBiosamplesSample(String sampleId) {
-        String authToken = getAuthToken();
-        if (authToken == null) {
-            authToken = generateAuthToken();
-        }
-
-        uk.ac.ebi.biosamples.model.Sample biosamplesSample = biosamplesService.findSampleById(sampleId, authToken);
+        uk.ac.ebi.biosamples.model.Sample biosamplesSample = biosamplesService.findSampleById(
+            sampleId, getBiosamplesAuthToken());
         if (biosamplesSample == null) {
             return null;
         }
@@ -174,19 +225,21 @@ SampleService extends WebinService
         return true;
     }
 
-    private String generateAuthToken() {
+    private WebinAuthClientService createWebinAuthClientService() {
         String authUrl = getTest() ? WEBIN_AUTH_TEST_URL : WEBIN_AUTH_PROD_URL;
 
-        WebinAuthClientService webinAuthClientService = new WebinAuthClientService(
+        return new WebinAuthClientService(
             new RestTemplateBuilder(),
             URI.create(authUrl),
-            getUserName(),
-            getPassword(),
+            biosamplesWebinUserName,
+            biosamplesWebinPassword,
             Arrays.asList(AuthRealm.ENA));
+    }
 
+    private String getBiosamplesAuthToken() {
         return RetryUtils.executeWithRetry(
             context -> webinAuthClientService.getJwt(),
-            context -> LOGGER.warn("Retrying acquiring authentication token."),
+            context -> LOGGER.warn("Retrying acquiring authentication token for Biosamples."),
             HttpServerErrorException.class, ResourceAccessException.class);
     }
 
