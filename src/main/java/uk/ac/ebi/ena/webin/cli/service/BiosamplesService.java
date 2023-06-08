@@ -26,7 +26,7 @@ import uk.ac.ebi.ena.webin.cli.utils.RetryUtils;
 import java.net.URI;
 import java.util.NoSuchElementException;
 
-public class BiosamplesService {
+class BiosamplesService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BiosamplesService.class);
 
