@@ -30,13 +30,14 @@ class BiosamplesService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BiosamplesService.class);
 
-    public static final String BIOSAMPLES_URL = "https://www.ebi.ac.uk/biosamples/";
+    public static final String BIOSAMPLES_URL_TEST = "https://wwwdev.ebi.ac.uk/biosamples/";
+    public static final String BIOSAMPLES_URL_PROD = "https://www.ebi.ac.uk/biosamples/";
 
     private final BioSamplesClient bioSamplesClient;
 
-    public BiosamplesService() {
+    public BiosamplesService(boolean test) {
         bioSamplesClient = new BioSamplesClient(
-            URI.create(BIOSAMPLES_URL),
+            URI.create(test ? BIOSAMPLES_URL_TEST : BIOSAMPLES_URL_PROD),
             null,
             new RestTemplateBuilder(),
             new SampleValidator(new AttributeValidator()),

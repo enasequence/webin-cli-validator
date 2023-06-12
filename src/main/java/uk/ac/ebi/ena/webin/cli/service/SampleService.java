@@ -60,7 +60,7 @@ SampleService extends WebinService
         biosamplesWebinAuthClientService = createBiosamplesWebinAuthClientService(
             builder.biosamplesWebinUserName, builder.biosamplesWebinPassword);
 
-        biosamplesService = new BiosamplesService();
+        biosamplesService = new BiosamplesService(getTest());
 
         sampleXmlService = new SampleXmlService.Builder()
             .setAuthToken(getAuthToken())

@@ -32,7 +32,7 @@ public class BiosamplesServiceTest {
 
     @Test
     public void testPublicSample() {
-        BiosamplesService biosamplesService = new BiosamplesService();
+        BiosamplesService biosamplesService = new BiosamplesService(true);
 
         Sample sample = biosamplesService.findSampleById("SAMEA13774371", webinAuthClientService.getJwt());
 
