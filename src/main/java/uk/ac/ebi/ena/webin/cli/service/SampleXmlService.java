@@ -10,11 +10,6 @@
  */
 package uk.ac.ebi.ena.webin.cli.service;
 
-import java.io.StringReader;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -29,12 +24,15 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-
 import uk.ac.ebi.ena.webin.cli.service.exception.ServiceException;
 import uk.ac.ebi.ena.webin.cli.service.exception.ServiceMessage;
 import uk.ac.ebi.ena.webin.cli.utils.RetryUtils;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Attribute;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.StringReader;
 
 public class
 SampleXmlService extends WebinService
@@ -61,7 +59,7 @@ SampleXmlService extends WebinService
     public Sample getSample(String sampleId){
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = getAuthHeader();
-        ResponseEntity<String> response = executeHttpGet( restTemplate ,  headers,  sampleId,  getTest());
+        ResponseEntity<String> response = executeHttpGet( restTemplate ,  headers,  sampleId);
         if (response == null) {
             throw new ServiceException(ServiceMessage.SAMPLE_SERVICE_VALIDATION_ERROR.format(sampleId));
         }
@@ -124,11 +122,11 @@ SampleXmlService extends WebinService
         }
     }
     
-    private ResponseEntity<String>  executeHttpGet(RestTemplate restTemplate , HttpHeaders headers, String sampleId, boolean test){
+    private ResponseEntity<String>  executeHttpGet(RestTemplate restTemplate , HttpHeaders headers, String sampleId){
 
         return RetryUtils.executeWithRetry(
             context -> restTemplate.exchange(
-                getWebinRestUri("samples/{id}", test),
+                resolveAgainstWebinRestUri("samples/{id}"),
                 HttpMethod.GET,
                 new HttpEntity<>(headers),
                 String.class,

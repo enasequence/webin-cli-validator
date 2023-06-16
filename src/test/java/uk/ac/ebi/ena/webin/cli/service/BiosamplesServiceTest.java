@@ -12,29 +12,19 @@ package uk.ac.ebi.ena.webin.cli.service;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import uk.ac.ebi.biosamples.client.model.auth.AuthRealm;
-import uk.ac.ebi.biosamples.client.service.WebinAuthClientService;
 import uk.ac.ebi.biosamples.model.Sample;
 
-import java.net.URI;
-import java.util.Arrays;
-
 public class BiosamplesServiceTest {
-
-    final WebinAuthClientService webinAuthClientService = new WebinAuthClientService(
-        new RestTemplateBuilder(),
-        URI.create(SampleService.WEBIN_AUTH_TEST_URL),
-        System.getenv("biosamples-webin-username"),
-        System.getenv("biosamples-webin-password"),
-        Arrays.asList(AuthRealm.ENA)
-    );
-
     @Test
     public void testPublicSample() {
-        BiosamplesService biosamplesService = new BiosamplesService(true);
+        BiosamplesService biosamplesService = new BiosamplesService(
+            SampleServiceTest.WEBIN_AUTH_URI,
+            SampleServiceTest.BIOSAMPLES_URI,
+            System.getenv("biosamples-webin-username"),
+            System.getenv("biosamples-webin-password")
+        );
 
-        Sample sample = biosamplesService.findSampleById("SAMEA13774371", webinAuthClientService.getJwt());
+        Sample sample = biosamplesService.findSampleById("SAMEA13774371", null);
 
         Assert.assertNotNull(sample);
         Assert.assertEquals("SSC_UEDIN_GS_WP2_21_ISO_SAMPLES_POOL", sample.getName());

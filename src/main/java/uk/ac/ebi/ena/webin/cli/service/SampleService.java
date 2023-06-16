@@ -12,7 +12,6 @@ package uk.ac.ebi.ena.webin.cli.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -20,17 +19,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
-import uk.ac.ebi.biosamples.client.model.auth.AuthRealm;
-import uk.ac.ebi.biosamples.client.service.WebinAuthClientService;
 import uk.ac.ebi.ena.webin.cli.service.exception.ServiceException;
 import uk.ac.ebi.ena.webin.cli.service.exception.ServiceMessage;
 import uk.ac.ebi.ena.webin.cli.utils.RetryUtils;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Attribute;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
 
-import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class 
@@ -44,37 +39,29 @@ SampleService extends WebinService
 
     private final String biosamplesWebinAuthToken;
 
-    private final WebinAuthClientService biosamplesWebinAuthClientService;
-
     private final BiosamplesService biosamplesService;
 
     private final SampleXmlService sampleXmlService;
 
-    protected 
-    SampleService( Builder builder )
-    {
-        super( builder );
-
-        this.biosamplesWebinAuthToken = builder.biosamplesWebinAuthToken;
-
-        biosamplesWebinAuthClientService = createBiosamplesWebinAuthClientService(
-            builder.biosamplesWebinUserName, builder.biosamplesWebinPassword);
-
-        biosamplesService = new BiosamplesService(getTest());
-
-        sampleXmlService = new SampleXmlService.Builder()
-            .setAuthToken(getAuthToken())
-            .setUserName(getUserName())
-            .setPassword(getPassword())
-            .setTest(getTest())
-            .build();
-    }
-
     public static class
     Builder extends AbstractBuilder<SampleService> {
+        protected String webinAuthUri;
+        protected String biosamplesUri;
         protected String biosamplesWebinAuthToken;
         protected String biosamplesWebinUserName;
         protected String biosamplesWebinPassword;
+
+        @Override
+        public Builder setWebinRestUri(String webinRestUri) {
+            super.setWebinRestUri(webinRestUri);
+            return this;
+        }
+
+        @Override
+        public Builder setWebinRestSubmissionUri(String webinRestSubmissionUri) {
+            super.setWebinRestSubmissionUri(webinRestSubmissionUri);
+            return this;
+        }
 
         @Override
         public Builder setUserName(String userName) {
@@ -95,14 +82,18 @@ SampleService extends WebinService
         }
 
         @Override
-        public Builder setTest(boolean test) {
-            super.setTest(test);
+        public Builder setAuthToken(String authToken) {
+            super.setAuthToken(authToken);
             return this;
         }
 
-        @Override
-        public Builder setAuthToken(String authToken) {
-            super.setAuthToken(authToken);
+        public Builder setWebinAuthUri(String webinAuthUri) {
+            this.webinAuthUri = webinAuthUri;
+            return this;
+        }
+
+        public Builder setBiosamplesUri(String biosamplesUri) {
+            this.biosamplesUri = biosamplesUri;
             return this;
         }
 
@@ -126,6 +117,25 @@ SampleService extends WebinService
         build() {
             return new SampleService(this);
         }
+    }
+
+    protected 
+    SampleService( Builder builder )
+    {
+        super( builder );
+
+        this.biosamplesWebinAuthToken = builder.biosamplesWebinAuthToken;
+
+        biosamplesService = new BiosamplesService(builder.webinAuthUri, builder.biosamplesUri,
+            builder.biosamplesWebinUserName, builder.biosamplesWebinPassword);
+
+        sampleXmlService = new SampleXmlService.Builder()
+            .setWebinRestUri(getWebinRestUri())
+            .setWebinRestSubmissionUri(getWebinRestSubmissionUri())
+            .setAuthToken(getAuthToken())
+            .setUserName(getUserName())
+            .setPassword(getPassword())
+            .build();
     }
 
     /**
@@ -173,7 +183,7 @@ SampleService extends WebinService
     private Sample getSraSample(String sampleId) {
         RestTemplate restTemplate = new RestTemplate();
 
-        ResponseEntity<SampleResponse> response = executeHttpGet( restTemplate ,  getAuthHeader(),  sampleId,  getTest());
+        ResponseEntity<SampleResponse> response = executeHttpGet( restTemplate ,  getAuthHeader(),  sampleId);
 
         SampleResponse sampleResponse = response.getBody();
         if (sampleResponse == null || !sampleResponse.canBeReferenced) {
@@ -194,7 +204,7 @@ SampleService extends WebinService
      */
     private Sample getBiosamplesSample(String sampleId) {
         uk.ac.ebi.biosamples.model.Sample biosamplesSample = biosamplesService.findSampleById(
-            sampleId, getBiosamplesAuthToken());
+            sampleId, biosamplesWebinAuthToken);
         if (biosamplesSample == null) {
             return null;
         }
@@ -230,35 +240,12 @@ SampleService extends WebinService
         return true;
     }
 
-    private WebinAuthClientService createBiosamplesWebinAuthClientService(
-        String biosamplesWebinUserName, String biosamplesWebinPassword) {
-        String authUrl = getTest() ? WEBIN_AUTH_TEST_URL : WEBIN_AUTH_PROD_URL;
-
-        return new WebinAuthClientService(
-            new RestTemplateBuilder(),
-            URI.create(authUrl),
-            biosamplesWebinUserName,
-            biosamplesWebinPassword,
-            Arrays.asList(AuthRealm.ENA));
-    }
-
-    private String getBiosamplesAuthToken() {
-        if (biosamplesWebinAuthToken != null) {
-            return biosamplesWebinAuthToken;
-        }
-
-        return RetryUtils.executeWithRetry(
-            context -> biosamplesWebinAuthClientService.getJwt(),
-            context -> LOGGER.warn("Retrying acquiring authentication token for Biosamples."),
-            HttpServerErrorException.class, ResourceAccessException.class);
-    }
-
     private ResponseEntity<SampleResponse> executeHttpGet(
-        RestTemplate restTemplate , HttpHeaders headers, String sampleId, boolean test){
+        RestTemplate restTemplate , HttpHeaders headers, String sampleId){
 
         return RetryUtils.executeWithRetry(
             context -> restTemplate.exchange(
-                getWebinRestUri("cli/reference/sample/{id}", test),
+                resolveAgainstWebinRestUri("cli/reference/sample/{id}"),
                 HttpMethod.GET,
                 new HttpEntity<>(headers),
                 SampleResponse.class,

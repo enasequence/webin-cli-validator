@@ -17,6 +17,8 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import uk.ac.ebi.biosamples.BioSamplesProperties;
 import uk.ac.ebi.biosamples.client.BioSamplesClient;
+import uk.ac.ebi.biosamples.client.model.auth.AuthRealm;
+import uk.ac.ebi.biosamples.client.service.WebinAuthClientService;
 import uk.ac.ebi.biosamples.model.Sample;
 import uk.ac.ebi.biosamples.service.AttributeValidator;
 import uk.ac.ebi.biosamples.service.SampleValidator;
@@ -24,35 +26,52 @@ import uk.ac.ebi.ena.webin.cli.service.exception.ServiceException;
 import uk.ac.ebi.ena.webin.cli.utils.RetryUtils;
 
 import java.net.URI;
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 class BiosamplesService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BiosamplesService.class);
 
-    public static final String BIOSAMPLES_URL_TEST = "https://wwwdev.ebi.ac.uk/biosamples/";
-    public static final String BIOSAMPLES_URL_PROD = "https://www.ebi.ac.uk/biosamples/";
-
     private final BioSamplesClient bioSamplesClient;
 
-    public BiosamplesService(boolean test) {
+    public BiosamplesService(String webinAuthUri, String biosamplesUri,
+                             String biosamplesWebinUserName, String biosamplesWebinPassword) {
+
+        WebinAuthClientService webinAuthClientService = null;
+        if (webinAuthUri != null && biosamplesWebinUserName != null && biosamplesWebinPassword != null) {
+            webinAuthClientService = new WebinAuthClientService(
+                new RestTemplateBuilder(),
+                URI.create(webinAuthUri),
+                biosamplesWebinUserName,
+                biosamplesWebinPassword,
+                Arrays.asList(AuthRealm.ENA));
+        }
+
         bioSamplesClient = new BioSamplesClient(
-            URI.create(test ? BIOSAMPLES_URL_TEST : BIOSAMPLES_URL_PROD),
+            URI.create(biosamplesUri),
             null,
             new RestTemplateBuilder(),
             new SampleValidator(new AttributeValidator()),
-            null,
+            webinAuthClientService,
             getBioSamplesProperties());
     }
 
+    /**
+     * @param accession
+     * @param webinAuthToken Can be null. If it is not null then this token will be used for authentication instead.
+     * @return
+     */
     public Sample findSampleById(String accession, String webinAuthToken) {
-        if (webinAuthToken == null || webinAuthToken.isEmpty()) {
-            throw new ServiceException("Invalid webin authentication token.");
-        }
-
         try {
             return RetryUtils.executeWithRetry(
-                context -> bioSamplesClient.fetchSampleResourceV2(accession, webinAuthToken),
+                context -> {
+                    if (webinAuthToken == null) {
+                        return bioSamplesClient.fetchSampleResourceV2(accession);
+                    } else {
+                        return bioSamplesClient.fetchSampleResourceV2(accession, webinAuthToken);
+                    }
+                },
                 context -> LOGGER.warn("Retrying sample retrieval from Biosamples."),
                 HttpServerErrorException.class, ResourceAccessException.class);
 

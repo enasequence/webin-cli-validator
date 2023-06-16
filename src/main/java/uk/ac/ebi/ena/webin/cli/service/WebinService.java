@@ -12,54 +12,34 @@ package uk.ac.ebi.ena.webin.cli.service;
 
 import org.springframework.http.HttpHeaders;
 
-
 public class
 WebinService {
-    public final static String WEBIN_REST_V1_TEST_URL = "https://wwwdev.ebi.ac.uk/ena/submit/drop-box/";
-    public final static String WEBIN_REST_V1_PROD_URL = "https://www.ebi.ac.uk/ena/submit/drop-box/";
-
-    public final static String WEBIN_REST_V2_TEST_URL = "https://wwwdev.ebi.ac.uk/ena/submit/webin-v2/";
-    public final static String WEBIN_REST_V2_PROD_URL = "https://www.ebi.ac.uk/ena/submit/webin-v2/";
-
-    public final static String WEBIN_AUTH_TEST_URL = "https://wwwdev.ebi.ac.uk/ena/submit/webin/auth/token";
-    public final static String WEBIN_AUTH_PROD_URL = "https://www.ebi.ac.uk/ena/submit/webin/auth/token";
+    private final String webinRestUri;
+    private final String webinRestSubmissionUri;
 
     private final String userName;
     private final String password;
     private final String authToken;
 
-    private final boolean test;
-
-    final String getWebinRestUri(String uri, boolean test) {
-        return (test) ?
-                WEBIN_REST_V1_TEST_URL + uri :
-                WEBIN_REST_V1_PROD_URL + uri;
-    }
-
-    final String getWebinRestUri(String uri) {
-        return (test) ?
-                WEBIN_REST_V1_TEST_URL + uri :
-                WEBIN_REST_V1_PROD_URL + uri;
-    }
-
-    final String getWebinRestSubmissionUri(String uri, boolean test) {
-        return (test) ?
-            WEBIN_REST_V2_TEST_URL + uri :
-            WEBIN_REST_V2_PROD_URL + uri;
-    }
-
-    final String getWebinRestSubmissionUri(String uri) {
-        return (test) ?
-            WEBIN_REST_V2_TEST_URL + uri :
-            WEBIN_REST_V2_PROD_URL + uri;
-    }
-
     public abstract static class
     AbstractBuilder<T> {
+        protected String webinRestUri;
+        protected String webinRestSubmissionUri;
         protected String userName;
         protected String password;
         protected String authToken;
-        protected boolean test;
+
+        public AbstractBuilder<T>
+        setWebinRestUri(String webinRestUri) {
+            this.webinRestUri = webinRestUri;
+            return this;
+        }
+
+        public AbstractBuilder<T>
+        setWebinRestSubmissionUri(String webinRestSubmissionUri) {
+            this.webinRestSubmissionUri = webinRestSubmissionUri;
+            return this;
+        }
 
         public AbstractBuilder<T>
         setUserName(String userName) {
@@ -81,12 +61,6 @@ WebinService {
         }
 
         public AbstractBuilder<T>
-        setTest(boolean test) {
-            this.test = test;
-            return this;
-        }
-
-        public AbstractBuilder<T>
         setAuthToken(String authToken) {
             this.authToken = authToken;
             return this;
@@ -95,17 +69,25 @@ WebinService {
         public abstract T build();
     }
 
+    protected WebinService(AbstractBuilder<?> builder) {
+        this.webinRestUri = builder.webinRestUri;
+        this.webinRestSubmissionUri = builder.webinRestSubmissionUri;
+        this.userName = builder.userName;
+        this.password = builder.password;
+        this.authToken = builder.authToken;
+    }
+
+    final String getWebinRestUri() {
+        return webinRestUri;
+    }
+
+    final String getWebinRestSubmissionUri() {
+        return webinRestSubmissionUri;
+    }
+
     public String
     getUserName() {
         return this.userName;
-    }
-
-    protected WebinService(AbstractBuilder<?> builder) {
-        this.userName = builder.userName;
-        this.password = builder.password;
-        this.authToken=builder.authToken;
-        this.test = builder.test;
-        
     }
 
     public String
@@ -113,14 +95,17 @@ WebinService {
         return this.password;
     }
 
-    public boolean
-    getTest() {
-        return this.test;
-    }
-
     public String
     getAuthToken() {
         return this.authToken;
+    }
+
+    final String resolveAgainstWebinRestUri(String uri) {
+        return webinRestUri + uri;
+    }
+
+    final String resolveAgainstWebinRestSubmissionUri(String uri) {
+        return webinRestSubmissionUri + uri;
     }
 
     public HttpHeaders getAuthHeader(){
@@ -133,6 +118,4 @@ WebinService {
         }
         return headers;
     }
-
-    
 }

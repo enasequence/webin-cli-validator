@@ -10,15 +10,14 @@
  */
 package uk.ac.ebi.ena.webin.cli.service;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.springframework.web.client.HttpClientErrorException;
-
 import uk.ac.ebi.ena.webin.cli.validator.reference.Attribute;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class
 SampleXmlServiceTest {
@@ -52,19 +51,19 @@ SampleXmlServiceTest {
         String id = "INVALID";
         exceptionRule.expect(HttpClientErrorException.NotFound.class);
         SampleXmlService sampleService = new SampleXmlService.Builder()
-                                                                     .setUserName( WEBIN_ACCOUNT_USERNAME )
-                                                                     .setPassword( WEBIN_ACCOUNT_PASSWORD )
-                                                                     .setTest( TEST )
-                                                                     .build();
+            .setWebinRestUri(SampleServiceTest.WEBIN_REST_URI)
+            .setUserName( WEBIN_ACCOUNT_USERNAME )
+            .setPassword( WEBIN_ACCOUNT_PASSWORD )
+            .build();
         sampleService.getSample(id);
     }
 
     private void testGetSourceFeatureUsingValidId(String id) {
         SampleXmlService sampleService = new SampleXmlService.Builder()
-                                                                     .setUserName( WEBIN_ACCOUNT_USERNAME  )
-                                                                     .setPassword( WEBIN_ACCOUNT_PASSWORD )
-                                                                     .setTest( TEST )
-                                                                     .build();
+            .setWebinRestUri(SampleServiceTest.WEBIN_REST_URI)
+            .setUserName( WEBIN_ACCOUNT_USERNAME  )
+            .setPassword( WEBIN_ACCOUNT_PASSWORD )
+            .build();
         Sample sample = sampleService.getSample( id );
         assertThat(sample).isNotNull();
         assertThat(sample.getTaxId()).isEqualTo(TAX_ID);

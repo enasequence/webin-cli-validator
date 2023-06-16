@@ -10,17 +10,20 @@
  */
 package uk.ac.ebi.ena.webin.cli.service;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.springframework.web.client.HttpClientErrorException;
-
 import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class
 SampleServiceTest {
+
+    public static final String WEBIN_REST_URI = "https://wwwdev.ebi.ac.uk/ena/submit/drop-box/";
+    public static final String WEBIN_AUTH_URI = "https://wwwdev.ebi.ac.uk/ena/submit/webin/auth/token";
+    public static final String BIOSAMPLES_URI = "https://wwwdev.ebi.ac.uk/biosamples/";
 
     private static final String WEBIN_ACCOUNT_USERNAME = System.getenv("webin-username");
     private static final String WEBIN_ACCOUNT_PASSWORD = System.getenv("webin-password");
@@ -53,12 +56,14 @@ SampleServiceTest {
         String id = "INVALID";
         exceptionRule.expect(HttpClientErrorException.NotFound.class);
         SampleService sampleService = new SampleService.Builder()
-                                                       .setUserName( WEBIN_ACCOUNT_USERNAME )
-                                                       .setPassword( WEBIN_ACCOUNT_PASSWORD )
-                                                       .setBiosamplesWebinUserName(BIOSAMPLES_WEBIN_ACCOUNT_USERNAME)
-                                                       .setBiosamplesWebinPassword(BIOSAMPLES_WEBIN_ACCOUNT_PASSWORD)
-                                                       .setTest( TEST )
-                                                       .build();
+            .setWebinRestUri(WEBIN_REST_URI)
+            .setUserName( WEBIN_ACCOUNT_USERNAME )
+            .setPassword( WEBIN_ACCOUNT_PASSWORD )
+            .setWebinAuthUri(WEBIN_AUTH_URI)
+            .setBiosamplesUri(BIOSAMPLES_URI)
+            .setBiosamplesWebinUserName(BIOSAMPLES_WEBIN_ACCOUNT_USERNAME)
+            .setBiosamplesWebinPassword(BIOSAMPLES_WEBIN_ACCOUNT_PASSWORD)
+            .build();
         sampleService.getSample( id );
     }
 
@@ -70,11 +75,13 @@ SampleServiceTest {
         String id = "SAMEA9403245";
 
         SampleService sampleService = new SampleService.Builder()
+            .setWebinRestUri(WEBIN_REST_URI)
             .setUserName( WEBIN_ACCOUNT_USERNAME )
             .setPassword( WEBIN_ACCOUNT_PASSWORD )
+            .setWebinAuthUri(WEBIN_AUTH_URI)
+            .setBiosamplesUri(BIOSAMPLES_URI)
             .setBiosamplesWebinUserName(BIOSAMPLES_WEBIN_ACCOUNT_USERNAME)
             .setBiosamplesWebinPassword(BIOSAMPLES_WEBIN_ACCOUNT_PASSWORD)
-            .setTest( TEST )
             .build();
 
         Sample sample = sampleService.getSample( id );
@@ -92,12 +99,14 @@ SampleServiceTest {
 
     private void testGetSampleUsingValidId(String id) {
         SampleService sampleService = new SampleService.Builder()
-                                                       .setUserName( WEBIN_ACCOUNT_USERNAME )
-                                                       .setPassword( WEBIN_ACCOUNT_PASSWORD )
-                                                       .setBiosamplesWebinUserName(BIOSAMPLES_WEBIN_ACCOUNT_USERNAME)
-                                                       .setBiosamplesWebinPassword(BIOSAMPLES_WEBIN_ACCOUNT_PASSWORD)
-                                                       .setTest( TEST )
-                                                       .build();
+            .setWebinRestUri(WEBIN_REST_URI)
+            .setUserName( WEBIN_ACCOUNT_USERNAME )
+            .setPassword( WEBIN_ACCOUNT_PASSWORD )
+            .setWebinAuthUri(WEBIN_AUTH_URI)
+            .setBiosamplesUri(BIOSAMPLES_URI)
+            .setBiosamplesWebinUserName(BIOSAMPLES_WEBIN_ACCOUNT_USERNAME)
+            .setBiosamplesWebinPassword(BIOSAMPLES_WEBIN_ACCOUNT_PASSWORD)
+            .build();
         Sample sample = sampleService.getSample( id );
         assertThat(sample).isNotNull();
         assertThat(sample.getBioSampleId()).isEqualTo(BIO_SAMPLE_ID);
