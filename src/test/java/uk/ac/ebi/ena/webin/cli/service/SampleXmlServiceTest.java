@@ -51,7 +51,7 @@ SampleXmlServiceTest {
         String id = "INVALID";
         exceptionRule.expect(HttpClientErrorException.NotFound.class);
         SampleXmlService sampleService = new SampleXmlService.Builder()
-            .setWebinRestUri(SampleServiceTest.WEBIN_REST_URI)
+            .setWebinRestV1Uri(SampleServiceTest.WEBIN_REST_URI)
             .setUserName( WEBIN_ACCOUNT_USERNAME )
             .setPassword( WEBIN_ACCOUNT_PASSWORD )
             .build();
@@ -60,7 +60,7 @@ SampleXmlServiceTest {
 
     private void testGetSourceFeatureUsingValidId(String id) {
         SampleXmlService sampleService = new SampleXmlService.Builder()
-            .setWebinRestUri(SampleServiceTest.WEBIN_REST_URI)
+            .setWebinRestV1Uri(SampleServiceTest.WEBIN_REST_URI)
             .setUserName( WEBIN_ACCOUNT_USERNAME  )
             .setPassword( WEBIN_ACCOUNT_PASSWORD )
             .build();

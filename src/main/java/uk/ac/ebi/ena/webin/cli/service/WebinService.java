@@ -23,21 +23,21 @@ WebinService {
 
     public abstract static class
     AbstractBuilder<T> {
-        protected String webinRestUri;
-        protected String webinRestSubmissionUri;
+        protected String webinRestV1Uri;
+        protected String webinRestV2Uri;
         protected String userName;
         protected String password;
         protected String authToken;
 
         public AbstractBuilder<T>
-        setWebinRestUri(String webinRestUri) {
-            this.webinRestUri = webinRestUri;
+        setWebinRestV1Uri(String webinRestV1Uri) {
+            this.webinRestV1Uri = webinRestV1Uri;
             return this;
         }
 
         public AbstractBuilder<T>
-        setWebinRestSubmissionUri(String webinRestSubmissionUri) {
-            this.webinRestSubmissionUri = webinRestSubmissionUri;
+        setWebinRestV2Uri(String webinRestV2Uri) {
+            this.webinRestV2Uri = webinRestV2Uri;
             return this;
         }
 
@@ -70,8 +70,8 @@ WebinService {
     }
 
     protected WebinService(AbstractBuilder<?> builder) {
-        this.webinRestV1Uri = builder.webinRestUri;
-        this.webinRestV2Uri = builder.webinRestSubmissionUri;
+        this.webinRestV1Uri = builder.webinRestV1Uri;
+        this.webinRestV2Uri = builder.webinRestV2Uri;
         this.userName = builder.userName;
         this.password = builder.password;
         this.authToken = builder.authToken;

@@ -52,14 +52,14 @@ SampleService extends WebinService
         protected String biosamplesWebinPassword;
 
         @Override
-        public Builder setWebinRestUri(String webinRestUri) {
-            super.setWebinRestUri(webinRestUri);
+        public Builder setWebinRestV1Uri(String webinRestV1Uri) {
+            super.setWebinRestV1Uri(webinRestV1Uri);
             return this;
         }
 
         @Override
-        public Builder setWebinRestSubmissionUri(String webinRestSubmissionUri) {
-            super.setWebinRestSubmissionUri(webinRestSubmissionUri);
+        public Builder setWebinRestV2Uri(String webinRestV2Uri) {
+            super.setWebinRestV2Uri(webinRestV2Uri);
             return this;
         }
 
@@ -130,8 +130,8 @@ SampleService extends WebinService
             builder.biosamplesWebinUserName, builder.biosamplesWebinPassword);
 
         sampleXmlService = new SampleXmlService.Builder()
-            .setWebinRestUri(getWebinRestV1Uri())
-            .setWebinRestSubmissionUri(getWebinRestV2Uri())
+            .setWebinRestV1Uri(getWebinRestV1Uri())
+            .setWebinRestV2Uri(getWebinRestV2Uri())
             .setAuthToken(getAuthToken())
             .setUserName(getUserName())
             .setPassword(getPassword())

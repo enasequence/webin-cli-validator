@@ -56,7 +56,7 @@ SampleServiceTest {
         String id = "INVALID";
         exceptionRule.expect(HttpClientErrorException.NotFound.class);
         SampleService sampleService = new SampleService.Builder()
-            .setWebinRestUri(WEBIN_REST_URI)
+            .setWebinRestV1Uri(WEBIN_REST_URI)
             .setUserName( WEBIN_ACCOUNT_USERNAME )
             .setPassword( WEBIN_ACCOUNT_PASSWORD )
             .setWebinAuthUri(WEBIN_AUTH_URI)
@@ -75,7 +75,7 @@ SampleServiceTest {
         String id = "SAMEA9403245";
 
         SampleService sampleService = new SampleService.Builder()
-            .setWebinRestUri(WEBIN_REST_URI)
+            .setWebinRestV1Uri(WEBIN_REST_URI)
             .setUserName( WEBIN_ACCOUNT_USERNAME )
             .setPassword( WEBIN_ACCOUNT_PASSWORD )
             .setWebinAuthUri(WEBIN_AUTH_URI)
@@ -99,7 +99,7 @@ SampleServiceTest {
 
     private void testGetSampleUsingValidId(String id) {
         SampleService sampleService = new SampleService.Builder()
-            .setWebinRestUri(WEBIN_REST_URI)
+            .setWebinRestV1Uri(WEBIN_REST_URI)
             .setUserName( WEBIN_ACCOUNT_USERNAME )
             .setPassword( WEBIN_ACCOUNT_PASSWORD )
             .setWebinAuthUri(WEBIN_AUTH_URI)
