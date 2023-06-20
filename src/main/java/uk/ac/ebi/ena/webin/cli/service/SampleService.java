@@ -130,8 +130,8 @@ SampleService extends WebinService
             builder.biosamplesWebinUserName, builder.biosamplesWebinPassword);
 
         sampleXmlService = new SampleXmlService.Builder()
-            .setWebinRestUri(getWebinRestUri())
-            .setWebinRestSubmissionUri(getWebinRestSubmissionUri())
+            .setWebinRestUri(getWebinRestV1Uri())
+            .setWebinRestSubmissionUri(getWebinRestV2Uri())
             .setAuthToken(getAuthToken())
             .setUserName(getUserName())
             .setPassword(getPassword())
@@ -245,7 +245,7 @@ SampleService extends WebinService
 
         return RetryUtils.executeWithRetry(
             context -> restTemplate.exchange(
-                resolveAgainstWebinRestUri("cli/reference/sample/{id}"),
+                resolveAgainstWebinRestV1Uri("cli/reference/sample/{id}"),
                 HttpMethod.GET,
                 new HttpEntity<>(headers),
                 SampleResponse.class,

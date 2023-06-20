@@ -14,8 +14,8 @@ import org.springframework.http.HttpHeaders;
 
 public class
 WebinService {
-    private final String webinRestUri;
-    private final String webinRestSubmissionUri;
+    private final String webinRestV1Uri;
+    private final String webinRestV2Uri;
 
     private final String userName;
     private final String password;
@@ -70,19 +70,19 @@ WebinService {
     }
 
     protected WebinService(AbstractBuilder<?> builder) {
-        this.webinRestUri = builder.webinRestUri;
-        this.webinRestSubmissionUri = builder.webinRestSubmissionUri;
+        this.webinRestV1Uri = builder.webinRestUri;
+        this.webinRestV2Uri = builder.webinRestSubmissionUri;
         this.userName = builder.userName;
         this.password = builder.password;
         this.authToken = builder.authToken;
     }
 
-    final String getWebinRestUri() {
-        return webinRestUri;
+    final String getWebinRestV1Uri() {
+        return webinRestV1Uri;
     }
 
-    final String getWebinRestSubmissionUri() {
-        return webinRestSubmissionUri;
+    final String getWebinRestV2Uri() {
+        return webinRestV2Uri;
     }
 
     public String
@@ -100,12 +100,12 @@ WebinService {
         return this.authToken;
     }
 
-    final String resolveAgainstWebinRestUri(String uri) {
-        return webinRestUri + uri;
+    public final String resolveAgainstWebinRestV1Uri(String uri) {
+        return webinRestV1Uri + uri;
     }
 
-    final String resolveAgainstWebinRestSubmissionUri(String uri) {
-        return webinRestSubmissionUri + uri;
+    public final String resolveAgainstWebinRestV2Uri(String uri) {
+        return webinRestV2Uri + uri;
     }
 
     public HttpHeaders getAuthHeader(){

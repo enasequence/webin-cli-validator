@@ -126,7 +126,7 @@ SampleXmlService extends WebinService
 
         return RetryUtils.executeWithRetry(
             context -> restTemplate.exchange(
-                resolveAgainstWebinRestUri("samples/{id}"),
+                resolveAgainstWebinRestV1Uri("samples/{id}"),
                 HttpMethod.GET,
                 new HttpEntity<>(headers),
                 String.class,

@@ -44,7 +44,6 @@ public abstract class Manifest <FileType extends Enum<FileType>> {
     private String webinAuthToken;
     private String webinRestUri;
     private String biosamplesUri;
-    private boolean webinCliTestMode;
 
     /** Temporary files must written into this directory.
      */
@@ -216,13 +215,5 @@ public abstract class Manifest <FileType extends Enum<FileType>> {
 
     public void setBiosamplesUri(String biosamplesUri) {
         this.biosamplesUri = biosamplesUri;
-    }
-
-    public boolean getWebinCliTestMode() {
-        return webinCliTestMode;
-    }
-
-    public void setWebinCliTestMode(boolean webinCliTestMode) {
-        this.webinCliTestMode = webinCliTestMode;
     }
 }
