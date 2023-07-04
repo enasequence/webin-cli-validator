@@ -199,7 +199,7 @@ public class ValidationResultTest {
     testWriteLog() throws IOException {
         try {
             ByteArrayOutputStream strm = new ByteArrayOutputStream();
-            System.setErr(new PrintStream(strm));
+            System.setOut(new PrintStream(strm));
 
             ValidationResult result = new ValidationResult();
             result.add(ValidationMessage.error("MESSAGE1"));
@@ -219,7 +219,7 @@ public class ValidationResultTest {
             // With origin.
 
             strm = new ByteArrayOutputStream();
-            System.setErr(new PrintStream(strm));
+            System.setOut(new PrintStream(strm));
 
             result = new ValidationResult();
             ValidationOrigin origin = new ValidationOrigin("ORIGIN", "TEST");
