@@ -143,11 +143,15 @@ SampleService extends WebinService
      * Also, if the sample is not retrieved from Biosamples then an attempt will be made to retrieve it from ENA.
      */
     public Sample getSample(String sampleId) {
+        boolean isBiosamplesRetrievalAlreadyAttempted = false;
+
         if (isBiosamplesId(sampleId)) {
             Sample biosamplesSample = getBiosamplesSample(sampleId);
             if (isBiosamplesSampleValid(biosamplesSample)) {
                 return biosamplesSample;
             }
+
+            isBiosamplesRetrievalAlreadyAttempted = true;
         }
 
         // If the sample couldn't be retrieved from Biosamples above then retrieve it from ENA.
@@ -158,7 +162,7 @@ SampleService extends WebinService
 
         // If SRA sample has a Biosamples accession then retrieve it from Biosamples using this accession. This is
         // becuase getting samples data from Biosamples is always preferred.
-        if (sraSample.getBioSampleId() != null) {
+        if (sraSample.getBioSampleId() != null && !isBiosamplesRetrievalAlreadyAttempted) {
             Sample biosamplesSample = getBiosamplesSample(sraSample.getBioSampleId());
             if (isBiosamplesSampleValid(biosamplesSample)) {
                 return biosamplesSample;
@@ -192,6 +196,7 @@ SampleService extends WebinService
 
         Sample sample = new Sample();
         sample.setBioSampleId(sampleResponse.bioSampleId);
+        sample.setName(sampleResponse.alias);
         sample.setTaxId(sampleResponse.taxId);
         sample.setOrganism(sampleResponse.organism);
         sample.setSraSampleId(sampleResponse.id);
@@ -211,6 +216,7 @@ SampleService extends WebinService
 
         Sample sample = new Sample();
         sample.setBioSampleId(biosamplesSample.getAccession());
+        sample.setName(biosamplesSample.getName());
         sample.setTaxId(biosamplesSample.getTaxId() == null ? null : biosamplesSample.getTaxId().intValue());
         sample.setOrganism(biosamplesSample.getAttributes().stream()
             .filter(attr -> attr.getType().equals("organism"))
@@ -259,6 +265,7 @@ SampleService extends WebinService
         public String id;
         public String organism;
         public String bioSampleId;
+        public String alias;
         public boolean canBeReferenced;
     }
 }

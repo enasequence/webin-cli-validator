@@ -31,12 +31,11 @@ SampleServiceTest {
     private static final String BIOSAMPLES_WEBIN_ACCOUNT_USERNAME = System.getenv("biosamples-webin-username");
     private static final String BIOSAMPLES_WEBIN_ACCOUNT_PASSWORD = System.getenv("biosamples-webin-password");
 
-    private static final boolean TEST = true;
-
     private static final String BIO_SAMPLE_ID = "SAMEA749881";
     private static final String SAMPLE_ID = "ERS000002";
     private static final String SCIENTIFIC_NAME = "Saccharomyces cerevisiae SK1";
     private static final int TAX_ID = 580239;
+    private static final String SAMPLE_NAME = "Solexa sequencing of Saccharomyces cerevisiae strain SK1 random 200 bp library";
 
     @Rule
     public ExpectedException exceptionRule = ExpectedException.none();
@@ -89,6 +88,7 @@ SampleServiceTest {
         assertThat(sample).isNotNull();
         assertThat(sample.getTaxId()).isEqualTo(9606);
         assertThat(sample.getOrganism()).isEqualTo("Homo sapiens");
+        assertThat(sample.getName()).isEqualTo("test_custom");
     }
 
     @Test
@@ -112,5 +112,6 @@ SampleServiceTest {
         assertThat(sample.getBioSampleId()).isEqualTo(BIO_SAMPLE_ID);
         assertThat(sample.getOrganism()).isEqualTo(SCIENTIFIC_NAME);
         assertThat(sample.getTaxId()).isEqualTo(TAX_ID);
+        assertThat(sample.getName()).isEqualTo(SAMPLE_NAME);
     }
 }

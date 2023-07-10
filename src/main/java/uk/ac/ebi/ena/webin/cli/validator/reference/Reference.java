@@ -19,6 +19,10 @@ import java.util.List;
  */
 public abstract class Reference {
 
+    /**
+     * This, depending upon where the sample was retrieved from, will either return Biosamples' sample 'name' or ENA's
+     * sample 'alias'.
+     */
     private String name;
     private List<Attribute> attributes = new ArrayList<>();
 
