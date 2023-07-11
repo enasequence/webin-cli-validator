@@ -3,11 +3,9 @@ plugins {
 }
 
 apply plugin: 'java'
+apply plugin: 'java-library'
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
-apply plugin: 'idea'
-apply plugin: 'eclipse'
-apply plugin: 'signing'
 
 group 'uk.ac.ebi.ena.webin-cli'
 version '1.7.4'
@@ -48,7 +46,7 @@ configurations.all {
 }
 
 dependencies {
-    compile('uk.ac.ebi.biosamples:client:5.2.18-RC1')
+    api('uk.ac.ebi.biosamples:client:5.2.18-RC1')
 
     implementation( 'org.springframework.retry:spring-retry:1.3.0' )
 
