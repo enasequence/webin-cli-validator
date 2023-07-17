@@ -126,10 +126,8 @@ SampleService extends WebinService
 
         this.biosamplesWebinAuthToken = builder.biosamplesWebinAuthToken;
 
-        // TODO disabled until Biosamples client high thread count issue is resolved.
-//        biosamplesService = new BiosamplesService(builder.webinAuthUri, builder.biosamplesUri,
-//            builder.biosamplesWebinUserName, builder.biosamplesWebinPassword);
-        biosamplesService = null;
+        biosamplesService = new BiosamplesService(builder.webinAuthUri, builder.biosamplesUri,
+            builder.biosamplesWebinUserName, builder.biosamplesWebinPassword);
 
         sampleXmlService = new SampleXmlService.Builder()
         .setWebinRestV1Uri(getWebinRestV1Uri())
@@ -145,18 +143,16 @@ SampleService extends WebinService
      * Also, if the sample is not retrieved from Biosamples then an attempt will be made to retrieve it from ENA.
      */
     public Sample getSample(String sampleId) {
-        // TODO Biosamples retrieval is disabled until Biosamples client high thread count issue is resolved.
+        boolean isBiosamplesRetrievalAlreadyAttempted = false;
 
-//        boolean isBiosamplesRetrievalAlreadyAttempted = false;
-//
-//        if (isBiosamplesId(sampleId)) {
-//            Sample biosamplesSample = getBiosamplesSample(sampleId);
-//            if (isBiosamplesSampleValid(biosamplesSample)) {
-//                return biosamplesSample;
-//            }
-//
-//            isBiosamplesRetrievalAlreadyAttempted = true;
-//        }
+        if (isBiosamplesId(sampleId)) {
+            Sample biosamplesSample = getBiosamplesSample(sampleId);
+            if (isBiosamplesSampleValid(biosamplesSample)) {
+                return biosamplesSample;
+            }
+
+            isBiosamplesRetrievalAlreadyAttempted = true;
+        }
 
         // If the sample couldn't be retrieved from Biosamples above then retrieve it from ENA.
         Sample sraSample = getSraSample(sampleId);
@@ -166,12 +162,12 @@ SampleService extends WebinService
 
         // If SRA sample has a Biosamples accession then retrieve it from Biosamples using this accession. This is
         // becuase getting samples data from Biosamples is always preferred.
-//        if (sraSample.getBioSampleId() != null && !isBiosamplesRetrievalAlreadyAttempted) {
-//            Sample biosamplesSample = getBiosamplesSample(sraSample.getBioSampleId());
-//            if (isBiosamplesSampleValid(biosamplesSample)) {
-//                return biosamplesSample;
-//            }
-//        }
+        if (sraSample.getBioSampleId() != null && !isBiosamplesRetrievalAlreadyAttempted) {
+            Sample biosamplesSample = getBiosamplesSample(sraSample.getBioSampleId());
+            if (isBiosamplesSampleValid(biosamplesSample)) {
+                return biosamplesSample;
+            }
+        }
 
         // Getting here means we couldn't get sample from Biosamples. So return the SRA sample instead after adding
         // attribute information to it.
