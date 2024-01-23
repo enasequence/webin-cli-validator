@@ -10,11 +10,16 @@
  */
 package uk.ac.ebi.ena.webin.cli.service;
 
+import java.net.URI;
+import java.util.Arrays;
+import java.util.NoSuchElementException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
+
 import uk.ac.ebi.biosamples.BioSamplesProperties;
 import uk.ac.ebi.biosamples.client.BioSamplesClient;
 import uk.ac.ebi.biosamples.client.model.auth.AuthRealm;
@@ -24,10 +29,6 @@ import uk.ac.ebi.biosamples.service.AttributeValidator;
 import uk.ac.ebi.biosamples.service.SampleValidator;
 import uk.ac.ebi.ena.webin.cli.service.exception.ServiceException;
 import uk.ac.ebi.ena.webin.cli.utils.RetryUtils;
-
-import java.net.URI;
-import java.util.Arrays;
-import java.util.NoSuchElementException;
 
 class BiosamplesService {
 

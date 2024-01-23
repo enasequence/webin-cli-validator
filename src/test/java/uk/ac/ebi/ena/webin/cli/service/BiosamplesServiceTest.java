@@ -12,6 +12,7 @@ package uk.ac.ebi.ena.webin.cli.service;
 
 import org.junit.Assert;
 import org.junit.Test;
+
 import uk.ac.ebi.biosamples.model.Sample;
 
 public class BiosamplesServiceTest {

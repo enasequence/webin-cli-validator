@@ -10,14 +10,15 @@
  */
 package uk.ac.ebi.ena.webin.cli.service;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.springframework.web.client.HttpClientErrorException;
+
 import uk.ac.ebi.ena.webin.cli.validator.reference.Attribute;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
-
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class
 SampleXmlServiceTest {
