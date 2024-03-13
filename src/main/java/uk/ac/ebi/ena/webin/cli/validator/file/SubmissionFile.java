@@ -20,6 +20,7 @@ public class SubmissionFile<FileType extends Enum<FileType>> {
 
     private FileType fileType;
     private File file;
+    private String md5;
 
     private List<Map.Entry<String, String>> attributes;
 
@@ -81,6 +82,14 @@ public class SubmissionFile<FileType extends Enum<FileType>> {
 
     public boolean isFileType(FileType fileType) {
         return fileType != null && fileType.equals(this.fileType);
+    }
+
+    public String getMd5() {
+        return md5;
+    }
+
+    public void setMd5(String md5) {
+        this.md5 = md5;
     }
 
     public List<Map.Entry<String, String>> getAttributes() {
