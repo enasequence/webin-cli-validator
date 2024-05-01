@@ -8,24 +8,35 @@
  * CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-package uk.ac.ebi.ena.webin.cli.validator.reference;
+package uk.ac.ebi.ena.webin.cli.validator.file;
 
-public class Run extends Reference {
-    private String runId;
+import java.io.Serializable;
 
-    public Run() {
+public class SubmissionFileAttribute implements Serializable {
+
+    private String name;
+    private String value;
+
+    public SubmissionFileAttribute() { }
+
+    public SubmissionFileAttribute(String name, String value) {
+        this.name = name;
+        this.value = value;
     }
 
-    public Run(String runId, String name) {
-        this.runId = runId;
-        this.setName(name);
+    public String getName() {
+        return name;
     }
 
-    public String getRunId() {
-        return runId;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public void setRunId(String runId) {
-        this.runId = runId;
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
     }
 }

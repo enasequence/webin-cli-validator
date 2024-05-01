@@ -1,14 +1,14 @@
 plugins {
+    id 'java'
+    id 'java-library'
+    id 'maven'
+    id 'maven-publish'
+
     id "com.diffplug.gradle.spotless" version "3.18.0"
 }
 
-apply plugin: 'java'
-apply plugin: 'java-library'
-apply plugin: 'maven'
-apply plugin: 'maven-publish'
-
 group 'uk.ac.ebi.ena.webin-cli'
-version '1.8.0'
+version '1.9.0'
 
 tasks.withType(Javadoc).all { enabled = false }
 

@@ -12,7 +12,7 @@ package uk.ac.ebi.ena.webin.cli.validator.file;
 
 import java.io.File;
 import java.util.List;
-import java.util.Map;
+
 
 /** Submitted file.
 */
@@ -22,7 +22,7 @@ public class SubmissionFile<FileType extends Enum<FileType>> {
     private File file;
     private String md5;
 
-    private List<Map.Entry<String, String>> attributes;
+    private List<SubmissionFileAttribute> attributes;
 
     /** Validation messages must be written into this file.
      */
@@ -42,14 +42,14 @@ public class SubmissionFile<FileType extends Enum<FileType>> {
         this.reportFile = reportFile;
     }
 
-    public SubmissionFile(FileType fileType, File file, List<Map.Entry<String, String>> attributes) {
+    public SubmissionFile(FileType fileType, File file, List<SubmissionFileAttribute> attributes) {
         this.fileType = fileType;
         this.file = file;
         this.attributes = attributes;
         this.reportFile = null;
     }
 
-    public SubmissionFile(FileType fileType, File file, List<Map.Entry<String, String>> attributes, File reportFile) {
+    public SubmissionFile(FileType fileType, File file, List<SubmissionFileAttribute> attributes, File reportFile) {
         this.fileType = fileType;
         this.file = file;
         this.attributes = attributes;
@@ -92,11 +92,11 @@ public class SubmissionFile<FileType extends Enum<FileType>> {
         this.md5 = md5;
     }
 
-    public List<Map.Entry<String, String>> getAttributes() {
+    public List<SubmissionFileAttribute> getAttributes() {
         return attributes;
     }
 
-    public void setAttributes(List<Map.Entry<String, String>> attributes) {
+    public void setAttributes(List<SubmissionFileAttribute> attributes) {
         this.attributes = attributes;
     }
 }
