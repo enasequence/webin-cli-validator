@@ -23,7 +23,7 @@ import org.springframework.web.client.ResourceAccessException;
 import uk.ac.ebi.biosamples.client.BioSamplesClient;
 import uk.ac.ebi.biosamples.client.model.auth.AuthRealm;
 import uk.ac.ebi.biosamples.client.service.WebinAuthClientService;
-import uk.ac.ebi.biosamples.client.utils.BioSamplesProperties;
+import uk.ac.ebi.biosamples.client.utils.ClientProperties;
 import uk.ac.ebi.biosamples.model.Sample;
 import uk.ac.ebi.biosamples.service.AttributeValidator;
 import uk.ac.ebi.biosamples.service.SampleValidator;
@@ -83,8 +83,8 @@ class BiosamplesService {
         }
     }
 
-    private BioSamplesProperties getBioSamplesProperties() {
-        return new BioSamplesProperties() {
+    private ClientProperties getBioSamplesProperties() {
+        return new ClientProperties() {
             @Override
             public int getBiosamplesClientPagesize() {
                 return 1000;
@@ -116,7 +116,7 @@ class BiosamplesService {
             }
 
             @Override
-            public boolean getAgentSolrStayalive() {
+            public Boolean getAgentSolrStayalive() {
                 return false;
             }
         };
