@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2021 EMBL - European Bioinformatics Institute
+ * Copyright 2018-2023 EMBL - European Bioinformatics Institute
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
  * file except in compliance with the License. You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -12,28 +12,40 @@ package uk.ac.ebi.ena.webin.cli.service;
 
 import org.junit.Assert;
 import org.junit.Test;
-
-import uk.ac.ebi.biosamples.model.Sample;
+import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
 
 public class BiosamplesServiceTest {
-    @Test
-    public void testPublicSample() {
-        BiosamplesService biosamplesService = new BiosamplesService(
+
+  @Test
+  public void testPublicSample() {
+    BiosamplesService biosamplesService =
+        new BiosamplesService(
             SampleServiceTest.WEBIN_AUTH_URI,
             SampleServiceTest.BIOSAMPLES_URI,
             System.getenv("biosamples-webin-username"),
-            System.getenv("biosamples-webin-password")
-        );
+            System.getenv("biosamples-webin-password"));
 
-        Sample sample = biosamplesService.findSampleById("SAMEA13774371", null);
+    Sample sample = biosamplesService.getSample("SAMEA13774371", null);
 
-        Assert.assertNotNull(sample);
-        Assert.assertEquals("SSC_UEDIN_GS_WP2_21_ISO_SAMPLES_POOL", sample.getName());
-        Assert.assertEquals("SAMEA13774371", sample.getAccession());
-        Assert.assertEquals(9823, sample.getTaxId().longValue());
-        Assert.assertEquals("Sus scrofa", sample.getAttributes().stream()
-            .filter(attr -> attr.getType().equals("organism"))
-            .findFirst().map(attr -> attr.getValue())
-            .get());
-    }
+    Assert.assertNotNull(sample);
+    Assert.assertEquals("SSC_UEDIN_GS_WP2_21_ISO_SAMPLES_POOL", sample.getName());
+    Assert.assertEquals("SAMEA13774371", sample.getBioSampleId());
+    Assert.assertEquals("Sus scrofa", sample.getOrganism());
+    Assert.assertEquals(9823, sample.getTaxId().longValue());
+    Assert.assertEquals(318, sample.getAttributes().size());
+  }
+
+  @Test
+  public void testInvalidSample() {
+    BiosamplesService biosamplesService =
+        new BiosamplesService(
+            SampleServiceTest.WEBIN_AUTH_URI,
+            SampleServiceTest.BIOSAMPLES_URI,
+            System.getenv("biosamples-webin-username"),
+            System.getenv("biosamples-webin-password"));
+
+    Sample sample = biosamplesService.getSample("xxx", null);
+
+    Assert.assertNull(sample);
+  }
 }

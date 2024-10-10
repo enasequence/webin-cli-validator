@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2021 EMBL - European Bioinformatics Institute
+ * Copyright 2018-2023 EMBL - European Bioinformatics Institute
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
  * file except in compliance with the License. You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -10,48 +10,44 @@
  */
 package uk.ac.ebi.ena.webin.cli.validator.reference;
 
-/**
- * Sample reference.
- */
+/** Sample reference. */
 public class Sample extends Reference {
 
-    private String bioSampleId;
-    private Integer taxId;
-    private String organism;
-    private String sraSampleId;
+  private String bioSampleId;
+  private Integer taxId;
+  private String organism;
+  private String sraSampleId;
 
-    public String getBioSampleId() {
-        return bioSampleId;
-    }
+  public String getBioSampleId() {
+    return bioSampleId;
+  }
 
-    public void setBioSampleId(String bioSampleId) {
-        this.bioSampleId = bioSampleId;
-    }
+  public void setBioSampleId(String bioSampleId) {
+    this.bioSampleId = bioSampleId;
+  }
 
-    public Integer getTaxId() {
-        return taxId;
-    }
+  public Integer getTaxId() {
+    return taxId;
+  }
 
-    public void setTaxId(Integer taxId) {
-        this.taxId = taxId;
-    }
+  public void setTaxId(Integer taxId) {
+    this.taxId = taxId;
+  }
 
-    public String getOrganism() {
-        return organism;
-    }
+  public String getOrganism() {
+    return organism;
+  }
 
-    public void setOrganism(String organism) {
-        this.organism = organism;
-    }
+  public void setOrganism(String organism) {
+    this.organism = organism;
+  }
 
-    /**
-     * This will be null if the sample was retrieved from Biosamples.
-     */
-    public String getSraSampleId() {
-        return sraSampleId;
-    }
+  /** This will be null if the sample was retrieved from Biosamples. */
+  public String getSraSampleId() {
+    return sraSampleId;
+  }
 
-    public void setSraSampleId(String sraSampleId) {
-        this.sraSampleId = sraSampleId;
-    }
+  public void setSraSampleId(String sraSampleId) {
+    this.sraSampleId = sraSampleId;
+  }
 }

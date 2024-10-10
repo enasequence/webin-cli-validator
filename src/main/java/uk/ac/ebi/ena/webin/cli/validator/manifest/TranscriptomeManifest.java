@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2021 EMBL - European Bioinformatics Institute
+ * Copyright 2018-2023 EMBL - European Bioinformatics Institute
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
  * file except in compliance with the License. You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -10,53 +10,51 @@
  */
 package uk.ac.ebi.ena.webin.cli.validator.manifest;
 
-/**
- * Manifest extension specific to transcriptome context
- */
+/** Manifest extension specific to transcriptome context */
 public class TranscriptomeManifest extends Manifest<TranscriptomeManifest.FileType> {
 
-    public enum FileType {
-        FASTA,
-        FLATFILE,
-    }
+  public enum FileType {
+    FASTA,
+    FLATFILE,
+  }
 
-    private String program;
-    private String platform;
-    private Boolean tpa;
-    private String assemblyType;
+  private String program;
+  private String platform;
+  private Boolean tpa;
+  private String assemblyType;
 
-    public String getProgram() {
-        return program;
-    }
+  public String getProgram() {
+    return program;
+  }
 
-    public void setProgram(String program) {
-        this.program = program;
-    }
+  public void setProgram(String program) {
+    this.program = program;
+  }
 
-    public String getPlatform() {
-        return platform;
-    }
+  public String getPlatform() {
+    return platform;
+  }
 
-    public void setPlatform(String platform) {
-        this.platform = platform;
-    }
+  public void setPlatform(String platform) {
+    this.platform = platform;
+  }
 
-    public Boolean isTpa() {
-        if (tpa == null) {
-            return false;
-        }
-        return tpa;
+  public Boolean isTpa() {
+    if (tpa == null) {
+      return false;
     }
+    return tpa;
+  }
 
-    public void setTpa(Boolean tpa) {
-        this.tpa = tpa;
-    }
+  public void setTpa(Boolean tpa) {
+    this.tpa = tpa;
+  }
 
-    public String getAssemblyType() {
-        return assemblyType;
-    }
+  public String getAssemblyType() {
+    return assemblyType;
+  }
 
-    public void setAssemblyType(String assemblyType) {
-        this.assemblyType = assemblyType;
-    }
+  public void setAssemblyType(String assemblyType) {
+    this.assemblyType = assemblyType;
+  }
 }

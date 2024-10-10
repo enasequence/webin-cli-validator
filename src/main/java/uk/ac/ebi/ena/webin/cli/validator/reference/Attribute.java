@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2021 EMBL - European Bioinformatics Institute
+ * Copyright 2018-2023 EMBL - European Bioinformatics Institute
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
  * file except in compliance with the License. You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -10,42 +10,42 @@
  */
 package uk.ac.ebi.ena.webin.cli.validator.reference;
 
-/**
- * Reference attribute with tag, value and unit.
- */
+import java.util.Set;
+
+/** Reference attribute with tag, value and unit. */
 public class Attribute {
 
-    private final String name;
-    private final String value;
-    private final String unit;
+  private final String name;
+  private final String value;
+  private final Set<String> iri;
+  private final String unit;
+  private final String tag;
 
-    public Attribute(String name) {
-        this.name = name;
-        this.value = null;
-        this.unit = null;
-    }
+  public Attribute(String name, String value, Set<String> iri, String unit, String tag) {
+    this.name = name;
+    this.value = value;
+    this.iri = iri;
+    this.unit = unit;
+    this.tag = tag;
+  }
 
-    public Attribute(String name, String value) {
-        this.name = name;
-        this.value = value;
-        this.unit = null;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public Attribute(String name, String value, String unit) {
-        this.name = name;
-        this.value = value;
-        this.unit = unit;
-    }
+  public String getValue() {
+    return value;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public Set<String> getIri() {
+    return iri;
+  }
 
-    public String getValue() {
-        return value;
-    }
+  public String getUnit() {
+    return unit;
+  }
 
-    public String getUnit() {
-        return unit;
-    }
+  public String getTag() {
+    return tag;
+  }
 }

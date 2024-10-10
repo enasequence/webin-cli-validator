@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2021 EMBL - European Bioinformatics Institute
+ * Copyright 2018-2023 EMBL - European Bioinformatics Institute
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
  * file except in compliance with the License. You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -14,39 +14,38 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * Abstract base class for references with id, name and list of attributes.
- */
+/** Abstract base class for references with id, name and list of attributes. */
 public abstract class Reference {
 
-    /**
-     * This, depending upon where the sample was retrieved from, will either return Biosamples' sample 'name' or ENA's
-     * sample 'alias'.
-     */
-    private String name;
-    private List<Attribute> attributes = new ArrayList<>();
+  /**
+   * This, depending upon where the sample was retrieved from, will either return Biosamples' sample
+   * 'name' or ENA's sample 'alias'.
+   */
+  private String name;
 
-    public String getName() {
-        return name;
-    }
+  private List<Attribute> attributes = new ArrayList<>();
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public void setAttributes(List<Attribute> attributes) {
-        this.attributes = attributes;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public List<Attribute> getAttributes() {
-        return attributes;
-    }
+  public void setAttributes(List<Attribute> attributes) {
+    this.attributes = attributes;
+  }
 
-    public void addAttribute(Attribute attribute) {
-        attributes.add(attribute);
-    }
+  public List<Attribute> getAttributes() {
+    return attributes;
+  }
 
-    public void addAttributes(Collection<Attribute> attributes) {
-        this.attributes.addAll(attributes);
-    }
+  public void addAttribute(Attribute attribute) {
+    attributes.add(attribute);
+  }
+
+  public void addAttributes(Collection<Attribute> attributes) {
+    this.attributes.addAll(attributes);
+  }
 }

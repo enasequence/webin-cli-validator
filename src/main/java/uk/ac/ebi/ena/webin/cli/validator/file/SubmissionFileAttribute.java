@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2021 EMBL - European Bioinformatics Institute
+ * Copyright 2018-2023 EMBL - European Bioinformatics Institute
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
  * file except in compliance with the License. You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -14,29 +14,29 @@ import java.io.Serializable;
 
 public class SubmissionFileAttribute implements Serializable {
 
-    private String name;
-    private String value;
+  private String name;
+  private String value;
 
-    public SubmissionFileAttribute() { }
+  public SubmissionFileAttribute() {}
 
-    public SubmissionFileAttribute(String name, String value) {
-        this.name = name;
-        this.value = value;
-    }
+  public SubmissionFileAttribute(String name, String value) {
+    this.name = name;
+    this.value = value;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public String getValue() {
-        return value;
-    }
+  public String getValue() {
+    return value;
+  }
 
-    public void setValue(String value) {
-        this.value = value;
-    }
+  public void setValue(String value) {
+    this.value = value;
+  }
 }

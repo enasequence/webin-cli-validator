@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2021 EMBL - European Bioinformatics Institute
+ * Copyright 2018-2023 EMBL - European Bioinformatics Institute
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
  * file except in compliance with the License. You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -15,30 +15,29 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/** List of submitted files.
- */
-public class SubmissionFiles <FileType extends Enum<FileType>> {
+/** List of submitted files. */
+public class SubmissionFiles<FileType extends Enum<FileType>> {
 
-    private List<SubmissionFile<FileType>> files = new ArrayList<>();
+  private List<SubmissionFile<FileType>> files = new ArrayList<>();
 
-    public void set(List<SubmissionFile<FileType>> files) {
-        this.files = files;
-    }
+  public void set(List<SubmissionFile<FileType>> files) {
+    this.files = files;
+  }
 
-    public SubmissionFiles<FileType> add(SubmissionFile<FileType> file) {
-        this.files.add(file);
-        return this;
-    }
+  public SubmissionFiles<FileType> add(SubmissionFile<FileType> file) {
+    this.files.add(file);
+    return this;
+  }
 
-    public List<SubmissionFile<FileType>> get() {
-        return files;
-    }
+  public List<SubmissionFile<FileType>> get() {
+    return files;
+  }
 
-    public List<SubmissionFile<FileType>> get(FileType fileType) {
-        return files.stream().filter(file -> file.isFileType(fileType)).collect(Collectors.toList());
-    }
+  public List<SubmissionFile<FileType>> get(FileType fileType) {
+    return files.stream().filter(file -> file.isFileType(fileType)).collect(Collectors.toList());
+  }
 
-    public List<File> files() {
-        return files.stream().map(file -> file.getFile()).collect(Collectors.toList());
-    }
+  public List<File> files() {
+    return files.stream().map(file -> file.getFile()).collect(Collectors.toList());
+  }
 }

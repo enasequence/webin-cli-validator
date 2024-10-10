@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2021 EMBL - European Bioinformatics Institute
+ * Copyright 2018-2023 EMBL - European Bioinformatics Institute
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
  * file except in compliance with the License. You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -35,83 +35,83 @@ public class ReadsManifest extends Manifest<ReadsManifest.FileType> {
   private QualityScore qualityScore;
   private Integer pairingHorizon = 500_000_000;
 
-    public String getPlatform() {
-        return platform;
-    }
+  public String getPlatform() {
+    return platform;
+  }
 
-    public void setPlatform(String platform) {
-        this.platform = platform;
-    }
+  public void setPlatform(String platform) {
+    this.platform = platform;
+  }
 
-    public String getInstrument() {
-        return instrument;
-    }
+  public String getInstrument() {
+    return instrument;
+  }
 
-    public void setInstrument(String instrument) {
-        this.instrument = instrument;
-    }
+  public void setInstrument(String instrument) {
+    this.instrument = instrument;
+  }
 
-    public Integer getInsertSize() {
-        return insertSize;
-    }
+  public Integer getInsertSize() {
+    return insertSize;
+  }
 
-    public void setInsertSize(Integer insertSize) {
-        this.insertSize = insertSize;
-    }
+  public void setInsertSize(Integer insertSize) {
+    this.insertSize = insertSize;
+  }
 
-    public String getLibraryConstructionProtocol() {
-        return libraryConstructionProtocol;
-    }
+  public String getLibraryConstructionProtocol() {
+    return libraryConstructionProtocol;
+  }
 
-    public void setLibraryConstructionProtocol(String libraryConstructionProtocol) {
-        this.libraryConstructionProtocol = libraryConstructionProtocol;
-    }
+  public void setLibraryConstructionProtocol(String libraryConstructionProtocol) {
+    this.libraryConstructionProtocol = libraryConstructionProtocol;
+  }
 
-    public String getLibraryName() {
-        return libraryName;
-    }
+  public String getLibraryName() {
+    return libraryName;
+  }
 
-    public void setLibraryName(String libraryName) {
-        this.libraryName = libraryName;
-    }
+  public void setLibraryName(String libraryName) {
+    this.libraryName = libraryName;
+  }
 
-    public String getLibrarySource() {
-        return librarySource;
-    }
+  public String getLibrarySource() {
+    return librarySource;
+  }
 
-    public void setLibrarySource(String librarySource) {
-        this.librarySource = librarySource;
-    }
+  public void setLibrarySource(String librarySource) {
+    this.librarySource = librarySource;
+  }
 
-    public String getLibrarySelection() {
-        return librarySelection;
-    }
+  public String getLibrarySelection() {
+    return librarySelection;
+  }
 
-    public void setLibrarySelection(String librarySelection) {
-        this.librarySelection = librarySelection;
-    }
+  public void setLibrarySelection(String librarySelection) {
+    this.librarySelection = librarySelection;
+  }
 
-    public String getLibraryStrategy() {
-        return libraryStrategy;
-    }
+  public String getLibraryStrategy() {
+    return libraryStrategy;
+  }
 
-    public void setLibraryStrategy(String libraryStrategy) {
-        this.libraryStrategy = libraryStrategy;
-    }
+  public void setLibraryStrategy(String libraryStrategy) {
+    this.libraryStrategy = libraryStrategy;
+  }
 
-    public QualityScore getQualityScore() {
-        return qualityScore;
-    }
+  public QualityScore getQualityScore() {
+    return qualityScore;
+  }
 
-    public void setQualityScore(QualityScore qualityScore) {
-        this.qualityScore = qualityScore;
-    }
+  public void setQualityScore(QualityScore qualityScore) {
+    this.qualityScore = qualityScore;
+  }
 
-    public Integer getPairingHorizon() {
-        return pairingHorizon;
-    }
+  public Integer getPairingHorizon() {
+    return pairingHorizon;
+  }
 
-    public void setPairingHorizon(Integer pairingHorizon) {
-        this.pairingHorizon = pairingHorizon;
-    }
+  public void setPairingHorizon(Integer pairingHorizon) {
+    this.pairingHorizon = pairingHorizon;
+  }
 }

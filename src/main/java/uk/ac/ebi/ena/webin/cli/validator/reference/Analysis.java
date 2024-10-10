@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2021 EMBL - European Bioinformatics Institute
+ * Copyright 2018-2023 EMBL - European Bioinformatics Institute
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
  * file except in compliance with the License. You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -11,21 +11,20 @@
 package uk.ac.ebi.ena.webin.cli.validator.reference;
 
 public class Analysis extends Reference {
-    private String analysisId;
+  private String analysisId;
 
-    public Analysis() {
-    }
+  public Analysis() {}
 
-    public Analysis(String analysisId, String name) {
-        this.analysisId = analysisId;
-        this.setName(name);
-    }
+  public Analysis(String analysisId, String name) {
+    this.analysisId = analysisId;
+    this.setName(name);
+  }
 
-    public String getAnalysisId() {
-        return analysisId;
-    }
+  public String getAnalysisId() {
+    return analysisId;
+  }
 
-    public void setAnalysisId(String analysisId) {
-        this.analysisId = analysisId;
-    }
+  public void setAnalysisId(String analysisId) {
+    this.analysisId = analysisId;
+  }
 }
