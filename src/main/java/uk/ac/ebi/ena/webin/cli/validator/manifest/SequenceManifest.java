@@ -16,6 +16,27 @@ public class SequenceManifest extends Manifest<SequenceManifest.FileType> {
   public enum FileType {
     FLATFILE,
     FASTA,
-    TAB
+    TAB,
+    SAMPLE_TSV,
+    TAX_TSV
+  }
+
+  private String analysisType;
+  private String analysisProtocol;
+
+  public String getAnalysisType() {
+    return analysisType;
+  }
+
+  public void setAnalysisType(String analysisType) {
+    this.analysisType = analysisType;
+  }
+
+  public String getAnalysisProtocol() {
+    return analysisProtocol;
+  }
+
+  public void setAnalysisProtocol(String analysisProtocol) {
+    this.analysisProtocol = analysisProtocol;
   }
 }
