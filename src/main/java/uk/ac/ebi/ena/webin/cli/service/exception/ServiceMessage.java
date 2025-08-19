@@ -14,7 +14,17 @@ import uk.ac.ebi.ena.webin.cli.validator.message.source.MessageFormatSource;
 
 public enum ServiceMessage implements MessageFormatSource {
   SAMPLE_SERVICE_VALIDATION_ERROR(
-      "Unknown sample {0} or the sample cannot be referenced by your submission account. Samples must be submitted before they can be referenced in the submission.");
+      "Unknown sample {0} or the sample cannot be referenced by your submission account. "
+          + "Samples must be submitted before they can be referenced in the submission."),
+
+  SAMPLE_SERVICE_TRANSFORMATION_ERROR(
+      "Sample {0} failed referencing due to an internal transformation error."),
+
+  BIOSAMPLES_NOT_FOUND_MESSAGE(
+      "Sample {0} not found in the BioSamples Database or the sample is not accessible for this submission."),
+
+  BIOSAMPLES_INVALID_MESSAGE(
+      "Sample {0} is found in the BioSamples Database but doesn't have an organism attribute and hence is unacceptable in a ENA submission.");
 
   private final String text;
 

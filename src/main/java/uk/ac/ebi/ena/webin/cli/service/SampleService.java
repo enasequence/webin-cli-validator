@@ -10,6 +10,8 @@
  */
 package uk.ac.ebi.ena.webin.cli.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -139,38 +141,78 @@ public class SampleService extends WebinService {
    * will be made to retrieve it from ENA.
    */
   public Sample getSample(String sampleId) {
+    final List<String> sampleRetrievalMessages = new ArrayList<>();
     boolean isBiosamplesRetrievalAlreadyAttempted = false;
+    boolean sraSampleRetrievalFailed = false;
+    Sample biosamplesSample;
 
+    // If the ID looks like a BioSamples accession, try BioSamples first
     if (isBiosamplesId(sampleId)) {
-      Sample biosamplesSample = getBiosamplesSample(sampleId);
-      if (isBiosamplesSampleValid(biosamplesSample)) {
-        return biosamplesSample;
+      try {
+        biosamplesSample = getBiosamplesSample(sampleId);
+      } catch (final Exception biosampleRetrievalException) {
+        biosamplesSample = null;
       }
 
-      isBiosamplesRetrievalAlreadyAttempted = true;
+      // No record returned from BioSamples
+      if (biosamplesSample == null) {
+        sampleRetrievalMessages.add(ServiceMessage.BIOSAMPLES_NOT_FOUND_MESSAGE.format(sampleId));
+      }
+      // Valid BioSamples record: return immediately
+      else if (isBiosamplesSampleValid(biosamplesSample)) {
+        return biosamplesSample;
+      }
+      // BioSamples record present but not usable
+      else {
+        sampleRetrievalMessages.add(ServiceMessage.BIOSAMPLES_INVALID_MESSAGE.format(sampleId));
+      }
     }
 
-    // If the sample couldn't be retrieved from Biosamples above then retrieve it from ENA.
+    // Otherwise (or if BioSamples was not usable), fallback to ENA retrieval afterward...
+    // If the sample couldn't be retrieved from Biosamples above, then retrieve it from ENA.
     Sample sraSample = getSraSample(sampleId);
+
     if (sraSample == null) {
-      return null;
+      sampleRetrievalMessages.add(ServiceMessage.SAMPLE_SERVICE_VALIDATION_ERROR.format(sampleId));
+      sraSampleRetrievalFailed = true;
     }
 
-    // If SRA sample has a Biosamples accession then retrieve it from Biosamples using this
-    // accession. This is
-    // becuase getting samples data from Biosamples is always preferred.
-    if (sraSample.getBioSampleId() != null && !isBiosamplesRetrievalAlreadyAttempted) {
-      Sample biosamplesSample = getBiosamplesSample(sraSample.getBioSampleId());
-      if (isBiosamplesSampleValid(biosamplesSample)) {
+    // If an SRA sample has a Biosamples accession, then try to retrieve it from Biosamples using
+    // this accession. This is because getting samples data from Biosamples is always preferred.
+    // This is done only when a previous attempt to retrieve from BioSamples is not performed, so
+    // there
+    // is no risk of duplicate checks and duplicate messages getting added to the list
+    if (sraSample != null
+        && sraSample.getBioSampleId() != null
+        && !isBiosamplesRetrievalAlreadyAttempted) {
+      biosamplesSample = getBiosamplesSample(sraSample.getBioSampleId());
+
+      if (biosamplesSample == null) {
+        sampleRetrievalMessages.add(ServiceMessage.BIOSAMPLES_NOT_FOUND_MESSAGE.format(sampleId));
+      } else if (isBiosamplesSampleValid(biosamplesSample)) {
         return biosamplesSample;
+      } else {
+        sampleRetrievalMessages.add(ServiceMessage.BIOSAMPLES_INVALID_MESSAGE.format(sampleId));
       }
     }
 
-    // Getting here means we couldn't get sample from Biosamples. So return the SRA sample instead
-    // after adding
-    // attribute information to it.
-    Sample sampleFromXml = sampleXmlService.getSample(sraSample.getSraSampleId());
-    sraSample.setAttributes(sampleFromXml.getAttributes());
+    // Getting here means we couldn't get a sample from Biosamples. So return the SRA sample instead
+    // after adding attribute information to it. This is performed if SRA sample retrieval is not
+    // attempted earlier
+    if (!sraSampleRetrievalFailed) {
+      Sample sampleFromXml = sampleXmlService.getSample(sraSample.getSraSampleId());
+
+      if (sampleFromXml == null) {
+        sampleRetrievalMessages.add(
+            ServiceMessage.SAMPLE_SERVICE_VALIDATION_ERROR.format(sampleId));
+
+        throw new ServiceException(sampleRetrievalMessages);
+      }
+
+      sraSample.setAttributes(sampleFromXml.getAttributes());
+    } else {
+      throw new ServiceException(sampleRetrievalMessages);
+    }
 
     return sraSample;
   }
@@ -182,16 +224,16 @@ public class SampleService extends WebinService {
   /** Returned sample will not have attribute information. */
   private Sample getSraSample(String sampleId) {
     RestTemplate restTemplate = new RestTemplate();
-
     ResponseEntity<SampleResponse> response =
         executeHttpGet(restTemplate, getAuthHeader(), sampleId);
-
     SampleResponse sampleResponse = response.getBody();
+
     if (sampleResponse == null || !sampleResponse.canBeReferenced) {
-      throw new ServiceException(ServiceMessage.SAMPLE_SERVICE_VALIDATION_ERROR.format(sampleId));
+      return null;
     }
 
     Sample sample = new Sample();
+
     sample.setBioSampleId(sampleResponse.bioSampleId);
     sample.setName(sampleResponse.alias);
     sample.setTaxId(sampleResponse.taxId);
@@ -211,11 +253,8 @@ public class SampleService extends WebinService {
    *     ID. True otherwise.
    */
   private boolean isBiosamplesSampleValid(Sample sample) {
-    if (sample == null || sample.getTaxId() == null) {
-      return false;
-    }
-
-    return true;
+    return sample.getAttributes().stream()
+        .anyMatch(attribute -> attribute.getName().equalsIgnoreCase("organism"));
   }
 
   private ResponseEntity<SampleResponse> executeHttpGet(

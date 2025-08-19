@@ -54,14 +54,15 @@ public class SampleXmlService extends WebinService {
     RestTemplate restTemplate = new RestTemplate();
     HttpHeaders headers = getAuthHeader();
     ResponseEntity<String> response = executeHttpGet(restTemplate, headers, sampleId);
+
     if (response == null) {
-      throw new ServiceException(ServiceMessage.SAMPLE_SERVICE_VALIDATION_ERROR.format(sampleId));
+      return null;
     }
+
     return getSampleFromXml(sampleId, response.getBody());
   }
 
   private Sample getSampleFromXml(String sampleId, String sampleXml) {
-
     try {
       Sample sample = new Sample();
 
@@ -118,7 +119,7 @@ public class SampleXmlService extends WebinService {
       return sample;
     } catch (Exception ex) {
       throw new ServiceException(
-          ex, ServiceMessage.SAMPLE_SERVICE_VALIDATION_ERROR.format(sampleId));
+          ex, ServiceMessage.SAMPLE_SERVICE_TRANSFORMATION_ERROR.format(sampleId));
     }
   }
 

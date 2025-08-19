@@ -73,9 +73,9 @@ public class SampleServiceTest {
   public void testSampleRetrievalFallback() {
     // This ID represents a sample which is private and does not contain full information on
     // Biosamples. It offers
-    // a nice opportunity to test ENA fallback i.e. if sample cannot be retrieved from Biosamples
-    // then it
-    // will be retrieved from ENA instead.
+    // a nice opportunity to test ENA fallback i.e., if a sample cannot be retrieved from
+    // BioSamples,
+    // then it will be retrieved from ENA instead.
     String id = "SAMEA9403245";
 
     SampleService sampleService =
