@@ -148,6 +148,7 @@ public class SampleService extends WebinService {
     if (isBiosamplesId(sampleId)) {
       try {
         biosamplesSample = getBiosamplesSample(sampleId);
+        isBiosamplesRetrievalAlreadyAttempted = true;
       } catch (final Exception biosampleRetrievalException) {
         biosamplesSample = null;
       }
