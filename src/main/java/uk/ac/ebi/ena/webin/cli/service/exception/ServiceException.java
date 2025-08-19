@@ -20,15 +20,7 @@ public class ServiceException extends RuntimeException {
     super(message, ex);
   }
 
-  public ServiceException(Exception ex, List<String> messages) {
-    super(messages.stream().collect(Collectors.joining("\n")), ex);
-  }
-
   public ServiceException(List<String> messages) {
-    super(messages.stream().collect(Collectors.joining("\n")));
-  }
-
-  public ServiceException(String message) {
-    super(message);
+    super(String.join("\n", messages));
   }
 }

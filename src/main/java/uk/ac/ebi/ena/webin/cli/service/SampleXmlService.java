@@ -36,15 +36,12 @@ import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
 public class SampleXmlService extends WebinService {
   private static final Logger LOGGER = LoggerFactory.getLogger(SampleXmlService.class);
 
-  public static final String SERVICE_NAME = "SampleXml";
-
   public static class Builder extends AbstractBuilder<SampleXmlService> {
     @Override
     public SampleXmlService build() {
       return new SampleXmlService(this);
     }
   }
-  ;
 
   public SampleXmlService(AbstractBuilder<SampleXmlService> builder) {
     super(builder);

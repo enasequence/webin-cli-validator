@@ -29,8 +29,6 @@ import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
 public class SampleService extends WebinService {
   private static final Logger LOGGER = LoggerFactory.getLogger(SampleService.class);
 
-  public static final String SERVICE_NAME = "Sample";
-
   public static final String BIOSAMPLES_ID_PREFIX = "SAM";
 
   private final String biosamplesWebinAuthToken;
