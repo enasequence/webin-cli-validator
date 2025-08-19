@@ -11,7 +11,6 @@
 package uk.ac.ebi.ena.webin.cli.service.exception;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ServiceException extends RuntimeException {
   private static final long serialVersionUID = 1L;
