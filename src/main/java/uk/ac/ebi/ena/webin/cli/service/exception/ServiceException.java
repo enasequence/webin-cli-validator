@@ -22,4 +22,8 @@ public class ServiceException extends RuntimeException {
   public ServiceException(List<String> messages) {
     super(String.join("\n", messages));
   }
+
+  public ServiceException(String message) {
+    super(message);
+  }
 }

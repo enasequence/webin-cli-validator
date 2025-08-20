@@ -169,7 +169,15 @@ public class SampleService extends WebinService {
 
     // Otherwise (or if BioSamples was not usable), fallback to ENA retrieval afterward...
     // If the sample couldn't be retrieved from Biosamples above, then retrieve it from ENA.
-    Sample sraSample = getSraSample(sampleId);
+    Sample sraSample;
+
+    try {
+      sraSample = getSraSample(sampleId);
+    } catch (ServiceException e) {
+      LOGGER.error("Failed to retrieve SRA sample: {}", sampleId, e);
+
+      sraSample = null;
+    }
 
     if (sraSample == null) {
       sampleRetrievalMessages.add(ServiceMessage.SAMPLE_SERVICE_VALIDATION_ERROR.format(sampleId));
@@ -220,26 +228,30 @@ public class SampleService extends WebinService {
     return biosampleId.toUpperCase().startsWith(BIOSAMPLES_ID_PREFIX);
   }
 
-  /** Returned sample will not have attribute information. */
+  /** The returned sample will not have attribute information. */
   private Sample getSraSample(String sampleId) {
-    RestTemplate restTemplate = new RestTemplate();
-    ResponseEntity<SampleResponse> response =
-        executeHttpGet(restTemplate, getAuthHeader(), sampleId);
-    SampleResponse sampleResponse = response.getBody();
+    try {
+      RestTemplate restTemplate = new RestTemplate();
+      ResponseEntity<SampleResponse> response =
+          executeHttpGet(restTemplate, getAuthHeader(), sampleId);
+      SampleResponse sampleResponse = response.getBody();
 
-    if (sampleResponse == null || !sampleResponse.canBeReferenced) {
-      return null;
+      if (sampleResponse == null || !sampleResponse.canBeReferenced) {
+        return null;
+      }
+
+      Sample sample = new Sample();
+
+      sample.setBioSampleId(sampleResponse.bioSampleId);
+      sample.setName(sampleResponse.alias);
+      sample.setTaxId(sampleResponse.taxId);
+      sample.setOrganism(sampleResponse.organism);
+      sample.setSraSampleId(sampleResponse.id);
+
+      return sample;
+    } catch (final Exception e) {
+      throw new ServiceException("Sample retrieval failed from Webin-REST");
     }
-
-    Sample sample = new Sample();
-
-    sample.setBioSampleId(sampleResponse.bioSampleId);
-    sample.setName(sampleResponse.alias);
-    sample.setTaxId(sampleResponse.taxId);
-    sample.setOrganism(sampleResponse.organism);
-    sample.setSraSampleId(sampleResponse.id);
-
-    return sample;
   }
 
   /** Returned sample will contain attribute information as well. */

@@ -11,11 +11,12 @@
 package uk.ac.ebi.ena.webin.cli.service;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.springframework.web.client.HttpClientErrorException;
+import uk.ac.ebi.ena.webin.cli.service.exception.ServiceException;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
 
 public class SampleServiceTest {
@@ -55,7 +56,7 @@ public class SampleServiceTest {
   @Test
   public void testGetSampleUsingInvalidId() {
     String id = "INVALID";
-    exceptionRule.expect(HttpClientErrorException.NotFound.class);
+    exceptionRule.expect(ServiceException.class);
     SampleService sampleService =
         new SampleService.Builder()
             .setWebinRestV1Uri(WEBIN_REST_URI)
@@ -76,6 +77,9 @@ public class SampleServiceTest {
     // a nice opportunity to test ENA fallback i.e., if a sample cannot be retrieved from
     // BioSamples,
     // then it will be retrieved from ENA instead.
+    // TODO: this sample is now public (so the does doesn't fall-back,
+    //  and also BioSample retrieval is using super user so sample is always accessible,
+    //  Webin-REST does handle the accessibility checks
     String id = "SAMEA9403245";
 
     SampleService sampleService =
@@ -95,6 +99,31 @@ public class SampleServiceTest {
     assertThat(sample.getTaxId()).isEqualTo(9606);
     assertThat(sample.getOrganism()).isEqualTo("Homo sapiens");
     assertThat(sample.getName()).isEqualTo("test_custom");
+  }
+
+  @Test
+  public void testSampleRetrievalError() {
+    String id = "SAMEA7915510";
+
+    SampleService sampleService =
+        new SampleService.Builder()
+            .setWebinRestV1Uri(WEBIN_REST_URI)
+            .setUserName(WEBIN_ACCOUNT_USERNAME)
+            .setPassword(WEBIN_ACCOUNT_PASSWORD)
+            .setWebinAuthUri(WEBIN_AUTH_URI)
+            .setBiosamplesUri(BIOSAMPLES_URI)
+            .setBiosamplesWebinUserName(BIOSAMPLES_WEBIN_ACCOUNT_USERNAME)
+            .setBiosamplesWebinPassword(BIOSAMPLES_WEBIN_ACCOUNT_PASSWORD)
+            .build();
+
+    try {
+      sampleService.getSample(id);
+    } catch (final Exception e) {
+      assertEquals(
+          "Sample SAMEA7915510 is found in the BioSamples Database but doesnt have an organism attribute and hence is unacceptable in a ENA submission.\n"
+              + "Unknown sample SAMEA7915510 or the sample cannot be referenced by your submission account. Samples must be submitted before they can be referenced in the submission.",
+          e.getMessage());
+    }
   }
 
   @Test
