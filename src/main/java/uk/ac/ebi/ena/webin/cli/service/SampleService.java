@@ -143,6 +143,7 @@ public class SampleService extends WebinService {
 
     if (isBiosamplesId(sampleId)) {
       Sample biosamplesSample = getBiosamplesSample(sampleId);
+
       if (isBiosamplesSampleValid(biosamplesSample)) {
         return biosamplesSample;
       }
@@ -150,26 +151,27 @@ public class SampleService extends WebinService {
       isBiosamplesRetrievalAlreadyAttempted = true;
     }
 
-    // If the sample couldn't be retrieved from Biosamples above then retrieve it from ENA.
+    // If the sample couldn't be retrieved from BioSamples above, then retrieve it from ENA.
     Sample sraSample = getSraSample(sampleId);
+
     if (sraSample == null) {
       return null;
     }
 
-    // If SRA sample has a Biosamples accession then retrieve it from Biosamples using this
-    // accession. This is
-    // becuase getting samples data from Biosamples is always preferred.
+    // If an SRA sample has a Biosamples accession, then retrieve it from Biosamples using this
+    // accession. This is because getting samples data from Biosamples is always preferred.
     if (sraSample.getBioSampleId() != null && !isBiosamplesRetrievalAlreadyAttempted) {
       Sample biosamplesSample = getBiosamplesSample(sraSample.getBioSampleId());
+
       if (isBiosamplesSampleValid(biosamplesSample)) {
         return biosamplesSample;
       }
     }
 
-    // Getting here means we couldn't get sample from Biosamples. So return the SRA sample instead
-    // after adding
-    // attribute information to it.
+    // Getting here means we couldn't get a sample from Biosamples. So return the SRA sample instead
+    // after adding attribute information to it.
     Sample sampleFromXml = sampleXmlService.getSample(sraSample.getSraSampleId());
+
     sraSample.setAttributes(sampleFromXml.getAttributes());
 
     return sraSample;
@@ -179,14 +181,13 @@ public class SampleService extends WebinService {
     return biosampleId.toUpperCase().startsWith(BIOSAMPLES_ID_PREFIX);
   }
 
-  /** Returned sample will not have attribute information. */
+  /** The returned sample will not have attribute information. */
   private Sample getSraSample(String sampleId) {
     RestTemplate restTemplate = new RestTemplate();
-
     ResponseEntity<SampleResponse> response =
         executeHttpGet(restTemplate, getAuthHeader(), sampleId);
-
     SampleResponse sampleResponse = response.getBody();
+
     if (sampleResponse == null || !sampleResponse.canBeReferenced) {
       throw new ServiceException(ServiceMessage.SAMPLE_SERVICE_VALIDATION_ERROR.format(sampleId));
     }
@@ -207,15 +208,12 @@ public class SampleService extends WebinService {
   }
 
   /**
-   * @return false if given Biosample sample is either null or has incomplete information i.e. Tax
-   *     ID. True otherwise.
+   * @return false if given Biosample sample is either null or has incomplete information, i.e.,
+   *     missing an organism attribute. True otherwise.
    */
   private boolean isBiosamplesSampleValid(Sample sample) {
-    if (sample == null || sample.getTaxId() == null) {
-      return false;
-    }
-
-    return true;
+    return sample.getAttributes().stream()
+        .anyMatch(attribute -> attribute.getName().equalsIgnoreCase("organism"));
   }
 
   private ResponseEntity<SampleResponse> executeHttpGet(

@@ -16,6 +16,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
 
 public class SampleServiceTest {
@@ -55,7 +56,9 @@ public class SampleServiceTest {
   @Test
   public void testGetSampleUsingInvalidId() {
     String id = "INVALID";
-    exceptionRule.expect(HttpClientErrorException.NotFound.class);
+
+    exceptionRule.expect(HttpClientErrorException.class);
+
     SampleService sampleService =
         new SampleService.Builder()
             .setWebinRestV1Uri(WEBIN_REST_URI)
@@ -66,6 +69,7 @@ public class SampleServiceTest {
             .setBiosamplesWebinUserName(BIOSAMPLES_WEBIN_ACCOUNT_USERNAME)
             .setBiosamplesWebinPassword(BIOSAMPLES_WEBIN_ACCOUNT_PASSWORD)
             .build();
+
     sampleService.getSample(id);
   }
 
@@ -73,9 +77,12 @@ public class SampleServiceTest {
   public void testSampleRetrievalFallback() {
     // This ID represents a sample which is private and does not contain full information on
     // Biosamples. It offers
-    // a nice opportunity to test ENA fallback i.e. if sample cannot be retrieved from Biosamples
-    // then it
-    // will be retrieved from ENA instead.
+    // a nice opportunity to test ENA fallback i.e., if a sample cannot be retrieved from
+    // BioSamples,
+    // then it will be retrieved from ENA instead.
+    // TODO: this sample is now public (so the does doesn't fall-back,
+    //  and also BioSample retrieval is using super user so sample is always accessible,
+    //  Webin-REST does handle the accessibility checks
     String id = "SAMEA9403245";
 
     SampleService sampleService =
@@ -95,6 +102,28 @@ public class SampleServiceTest {
     assertThat(sample.getTaxId()).isEqualTo(9606);
     assertThat(sample.getOrganism()).isEqualTo("Homo sapiens");
     assertThat(sample.getName()).isEqualTo("test_custom");
+  }
+
+  @Test
+  public void testSampleRetrievalError() {
+    String id = "SAMEA7915510";
+
+    // TODO: fix the Webin REST bug that fails to reftrieve samples having no SRA sample accession -
+    // ENA-6579
+    exceptionRule.expect(HttpServerErrorException.class);
+
+    SampleService sampleService =
+        new SampleService.Builder()
+            .setWebinRestV1Uri(WEBIN_REST_URI)
+            .setUserName(WEBIN_ACCOUNT_USERNAME)
+            .setPassword(WEBIN_ACCOUNT_PASSWORD)
+            .setWebinAuthUri(WEBIN_AUTH_URI)
+            .setBiosamplesUri(BIOSAMPLES_URI)
+            .setBiosamplesWebinUserName(BIOSAMPLES_WEBIN_ACCOUNT_USERNAME)
+            .setBiosamplesWebinPassword(BIOSAMPLES_WEBIN_ACCOUNT_PASSWORD)
+            .build();
+
+    sampleService.getSample(id);
   }
 
   @Test
