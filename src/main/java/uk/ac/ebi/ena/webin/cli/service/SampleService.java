@@ -154,6 +154,10 @@ public class SampleService extends WebinService {
     // If the sample couldn't be retrieved from BioSamples above, then retrieve it from ENA.
     Sample sraSample = getSraSample(sampleId);
 
+    if (sraSample == null) {
+      return null;
+    }
+
     // If an SRA sample has a Biosamples accession, then retrieve it from Biosamples using this
     // accession. This is because getting samples data from Biosamples is always preferred.
     if (sraSample.getBioSampleId() != null && !isBiosamplesRetrievalAlreadyAttempted) {
@@ -179,28 +183,23 @@ public class SampleService extends WebinService {
 
   /** The returned sample will not have attribute information. */
   private Sample getSraSample(String sampleId) {
-    try {
-      RestTemplate restTemplate = new RestTemplate();
-      ResponseEntity<SampleResponse> response =
-          executeHttpGet(restTemplate, getAuthHeader(), sampleId);
-      SampleResponse sampleResponse = response.getBody();
+    RestTemplate restTemplate = new RestTemplate();
+    ResponseEntity<SampleResponse> response =
+        executeHttpGet(restTemplate, getAuthHeader(), sampleId);
+    SampleResponse sampleResponse = response.getBody();
 
-      if (sampleResponse == null || !sampleResponse.canBeReferenced) {
-        throw new ServiceException(ServiceMessage.SAMPLE_SERVICE_VALIDATION_ERROR.format(sampleId));
-      }
-
-      Sample sample = new Sample();
-      sample.setBioSampleId(sampleResponse.bioSampleId);
-      sample.setName(sampleResponse.alias);
-      sample.setTaxId(sampleResponse.taxId);
-      sample.setOrganism(sampleResponse.organism);
-      sample.setSraSampleId(sampleResponse.id);
-
-      return sample;
-    } catch (final Exception e) {
-      throw new ServiceException(
-          e, ServiceMessage.SAMPLE_SERVICE_VALIDATION_ERROR.format(sampleId));
+    if (sampleResponse == null || !sampleResponse.canBeReferenced) {
+      throw new ServiceException(ServiceMessage.SAMPLE_SERVICE_VALIDATION_ERROR.format(sampleId));
     }
+
+    Sample sample = new Sample();
+    sample.setBioSampleId(sampleResponse.bioSampleId);
+    sample.setName(sampleResponse.alias);
+    sample.setTaxId(sampleResponse.taxId);
+    sample.setOrganism(sampleResponse.organism);
+    sample.setSraSampleId(sampleResponse.id);
+
+    return sample;
   }
 
   /** Returned sample will contain attribute information as well. */

@@ -11,12 +11,12 @@
 package uk.ac.ebi.ena.webin.cli.service;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.Assert.assertEquals;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import uk.ac.ebi.ena.webin.cli.service.exception.ServiceException;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
 
 public class SampleServiceTest {
@@ -56,7 +56,9 @@ public class SampleServiceTest {
   @Test
   public void testGetSampleUsingInvalidId() {
     String id = "INVALID";
-    exceptionRule.expect(ServiceException.class);
+
+    exceptionRule.expect(HttpClientErrorException.class);
+
     SampleService sampleService =
         new SampleService.Builder()
             .setWebinRestV1Uri(WEBIN_REST_URI)
@@ -67,6 +69,7 @@ public class SampleServiceTest {
             .setBiosamplesWebinUserName(BIOSAMPLES_WEBIN_ACCOUNT_USERNAME)
             .setBiosamplesWebinPassword(BIOSAMPLES_WEBIN_ACCOUNT_PASSWORD)
             .build();
+
     sampleService.getSample(id);
   }
 
@@ -105,6 +108,10 @@ public class SampleServiceTest {
   public void testSampleRetrievalError() {
     String id = "SAMEA7915510";
 
+    // TODO: fix the Webin REST bug that fails to reftrieve samples having no SRA sample accession -
+    // ENA-6579
+    exceptionRule.expect(HttpServerErrorException.class);
+
     SampleService sampleService =
         new SampleService.Builder()
             .setWebinRestV1Uri(WEBIN_REST_URI)
@@ -116,13 +123,7 @@ public class SampleServiceTest {
             .setBiosamplesWebinPassword(BIOSAMPLES_WEBIN_ACCOUNT_PASSWORD)
             .build();
 
-    try {
-      sampleService.getSample(id);
-    } catch (final Exception e) {
-      assertEquals(
-          "Unknown sample SAMEA7915510 or the sample cannot be referenced by your submission account. Samples must be submitted before they can be referenced in the submission.",
-          e.getMessage());
-    }
+    sampleService.getSample(id);
   }
 
   @Test
