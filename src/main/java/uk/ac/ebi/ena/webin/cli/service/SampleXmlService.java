@@ -53,9 +53,11 @@ public class SampleXmlService extends WebinService {
     RestTemplate restTemplate = new RestTemplate();
     HttpHeaders headers = getAuthHeader();
     ResponseEntity<String> response = executeHttpGet(restTemplate, headers, sampleId);
+
     if (response == null) {
       throw new ServiceException(ServiceMessage.SAMPLE_SERVICE_VALIDATION_ERROR.format(sampleId));
     }
+
     return getSampleFromXml(sampleId, response.getBody());
   }
 

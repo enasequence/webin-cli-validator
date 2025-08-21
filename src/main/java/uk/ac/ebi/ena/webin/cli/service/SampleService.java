@@ -151,7 +151,7 @@ public class SampleService extends WebinService {
       isBiosamplesRetrievalAlreadyAttempted = true;
     }
 
-    // If the sample couldn't be retrieved from Biosamples above then retrieve it from ENA.
+    // If the sample couldn't be retrieved from BioSamples above, then retrieve it from ENA.
     Sample sraSample = getSraSample(sampleId);
 
     // If an SRA sample has a Biosamples accession, then retrieve it from Biosamples using this
