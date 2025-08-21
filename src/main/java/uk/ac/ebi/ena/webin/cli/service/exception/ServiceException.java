@@ -10,20 +10,14 @@
  */
 package uk.ac.ebi.ena.webin.cli.service.exception;
 
-import java.util.List;
-
 public class ServiceException extends RuntimeException {
   private static final long serialVersionUID = 1L;
 
-  public ServiceException(Exception ex, String message) {
-    super(message, ex);
+  public ServiceException(Exception ex, String messages) {
+    super(messages, ex);
   }
 
-  public ServiceException(List<String> messages) {
-    super(String.join("\n", messages));
-  }
-
-  public ServiceException(String message) {
-    super(message);
+  public ServiceException(String messages) {
+    super(messages);
   }
 }

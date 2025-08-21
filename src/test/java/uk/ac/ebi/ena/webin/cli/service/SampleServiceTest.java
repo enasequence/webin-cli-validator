@@ -120,8 +120,7 @@ public class SampleServiceTest {
       sampleService.getSample(id);
     } catch (final Exception e) {
       assertEquals(
-          "Sample SAMEA7915510 is found in the BioSamples Database but doesnt have an organism attribute and hence is unacceptable in a ENA submission.\n"
-              + "Unknown sample SAMEA7915510 or the sample cannot be referenced by your submission account. Samples must be submitted before they can be referenced in the submission.",
+          "Unknown sample SAMEA7915510 or the sample cannot be referenced by your submission account. Samples must be submitted before they can be referenced in the submission.",
           e.getMessage());
     }
   }

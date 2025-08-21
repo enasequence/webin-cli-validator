@@ -10,8 +10,6 @@
  */
 package uk.ac.ebi.ena.webin.cli.service;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -28,6 +26,8 @@ import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
 
 public class SampleService extends WebinService {
   private static final Logger LOGGER = LoggerFactory.getLogger(SampleService.class);
+
+  public static final String SERVICE_NAME = "Sample";
 
   public static final String BIOSAMPLES_ID_PREFIX = "SAM";
 
@@ -139,87 +139,36 @@ public class SampleService extends WebinService {
    * will be made to retrieve it from ENA.
    */
   public Sample getSample(String sampleId) {
-    final List<String> sampleRetrievalMessages = new ArrayList<>();
     boolean isBiosamplesRetrievalAlreadyAttempted = false;
-    boolean sraSampleRetrievalFailed = false;
-    Sample biosamplesSample;
 
-    // If the ID looks like a BioSamples accession, try BioSamples first
     if (isBiosamplesId(sampleId)) {
-      try {
-        biosamplesSample = getBiosamplesSample(sampleId);
-        isBiosamplesRetrievalAlreadyAttempted = true;
-      } catch (final Exception biosampleRetrievalException) {
-        biosamplesSample = null;
-      }
+      Sample biosamplesSample = getBiosamplesSample(sampleId);
 
-      // No record returned from BioSamples
-      if (biosamplesSample == null) {
-        sampleRetrievalMessages.add(ServiceMessage.BIOSAMPLES_NOT_FOUND_MESSAGE.format(sampleId));
-      }
-      // Valid BioSamples record: return immediately
-      else if (isBiosamplesSampleValid(biosamplesSample)) {
+      if (isBiosamplesSampleValid(biosamplesSample)) {
         return biosamplesSample;
       }
-      // BioSamples record present but not usable
-      else {
-        sampleRetrievalMessages.add(ServiceMessage.BIOSAMPLES_INVALID_MESSAGE.format(sampleId));
-      }
+
+      isBiosamplesRetrievalAlreadyAttempted = true;
     }
 
-    // Otherwise (or if BioSamples was not usable), fallback to ENA retrieval afterward...
-    // If the sample couldn't be retrieved from Biosamples above, then retrieve it from ENA.
-    Sample sraSample;
+    // If the sample couldn't be retrieved from Biosamples above then retrieve it from ENA.
+    Sample sraSample = getSraSample(sampleId);
 
-    try {
-      sraSample = getSraSample(sampleId);
-    } catch (ServiceException e) {
-      LOGGER.error("Failed to retrieve SRA sample: {}", sampleId, e);
+    // If an SRA sample has a Biosamples accession, then retrieve it from Biosamples using this
+    // accession. This is because getting samples data from Biosamples is always preferred.
+    if (sraSample.getBioSampleId() != null && !isBiosamplesRetrievalAlreadyAttempted) {
+      Sample biosamplesSample = getBiosamplesSample(sraSample.getBioSampleId());
 
-      sraSample = null;
-    }
-
-    if (sraSample == null) {
-      sampleRetrievalMessages.add(ServiceMessage.SAMPLE_SERVICE_VALIDATION_ERROR.format(sampleId));
-      sraSampleRetrievalFailed = true;
-    }
-
-    // If an SRA sample has a Biosamples accession, then try to retrieve it from Biosamples using
-    // this accession. This is because getting samples data from Biosamples is always preferred.
-    // This is done only when a previous attempt to retrieve from BioSamples is not performed, so
-    // there
-    // is no risk of duplicate checks and duplicate messages getting added to the list
-    if (sraSample != null
-        && sraSample.getBioSampleId() != null
-        && !isBiosamplesRetrievalAlreadyAttempted) {
-      biosamplesSample = getBiosamplesSample(sraSample.getBioSampleId());
-
-      if (biosamplesSample == null) {
-        sampleRetrievalMessages.add(ServiceMessage.BIOSAMPLES_NOT_FOUND_MESSAGE.format(sampleId));
-      } else if (isBiosamplesSampleValid(biosamplesSample)) {
+      if (isBiosamplesSampleValid(biosamplesSample)) {
         return biosamplesSample;
-      } else {
-        sampleRetrievalMessages.add(ServiceMessage.BIOSAMPLES_INVALID_MESSAGE.format(sampleId));
       }
     }
 
     // Getting here means we couldn't get a sample from Biosamples. So return the SRA sample instead
-    // after adding attribute information to it. This is performed if SRA sample retrieval is not
-    // attempted earlier
-    if (!sraSampleRetrievalFailed) {
-      Sample sampleFromXml = sampleXmlService.getSample(sraSample.getSraSampleId());
+    // after adding attribute information to it.
+    Sample sampleFromXml = sampleXmlService.getSample(sraSample.getSraSampleId());
 
-      if (sampleFromXml == null) {
-        sampleRetrievalMessages.add(
-            ServiceMessage.SAMPLE_SERVICE_VALIDATION_ERROR.format(sampleId));
-
-        throw new ServiceException(sampleRetrievalMessages);
-      }
-
-      sraSample.setAttributes(sampleFromXml.getAttributes());
-    } else {
-      throw new ServiceException(sampleRetrievalMessages);
-    }
+    sraSample.setAttributes(sampleFromXml.getAttributes());
 
     return sraSample;
   }
@@ -237,11 +186,10 @@ public class SampleService extends WebinService {
       SampleResponse sampleResponse = response.getBody();
 
       if (sampleResponse == null || !sampleResponse.canBeReferenced) {
-        return null;
+        throw new ServiceException(ServiceMessage.SAMPLE_SERVICE_VALIDATION_ERROR.format(sampleId));
       }
 
       Sample sample = new Sample();
-
       sample.setBioSampleId(sampleResponse.bioSampleId);
       sample.setName(sampleResponse.alias);
       sample.setTaxId(sampleResponse.taxId);
@@ -250,7 +198,8 @@ public class SampleService extends WebinService {
 
       return sample;
     } catch (final Exception e) {
-      throw new ServiceException("Sample retrieval failed from Webin-REST");
+      throw new ServiceException(
+          e, ServiceMessage.SAMPLE_SERVICE_VALIDATION_ERROR.format(sampleId));
     }
   }
 
@@ -260,8 +209,8 @@ public class SampleService extends WebinService {
   }
 
   /**
-   * @return false if given Biosample sample is either null or has incomplete information i.e. Tax
-   *     ID. True otherwise.
+   * @return false if given Biosample sample is either null or has incomplete information, i.e.,
+   *     missing an organism attribute. True otherwise.
    */
   private boolean isBiosamplesSampleValid(Sample sample) {
     return sample.getAttributes().stream()

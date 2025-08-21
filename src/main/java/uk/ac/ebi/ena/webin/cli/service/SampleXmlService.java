@@ -36,6 +36,8 @@ import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
 public class SampleXmlService extends WebinService {
   private static final Logger LOGGER = LoggerFactory.getLogger(SampleXmlService.class);
 
+  public static final String SERVICE_NAME = "SampleXml";
+
   public static class Builder extends AbstractBuilder<SampleXmlService> {
     @Override
     public SampleXmlService build() {
@@ -51,15 +53,14 @@ public class SampleXmlService extends WebinService {
     RestTemplate restTemplate = new RestTemplate();
     HttpHeaders headers = getAuthHeader();
     ResponseEntity<String> response = executeHttpGet(restTemplate, headers, sampleId);
-
     if (response == null) {
-      return null;
+      throw new ServiceException(ServiceMessage.SAMPLE_SERVICE_VALIDATION_ERROR.format(sampleId));
     }
-
     return getSampleFromXml(sampleId, response.getBody());
   }
 
   private Sample getSampleFromXml(String sampleId, String sampleXml) {
+
     try {
       Sample sample = new Sample();
 
@@ -116,7 +117,7 @@ public class SampleXmlService extends WebinService {
       return sample;
     } catch (Exception ex) {
       throw new ServiceException(
-          ex, ServiceMessage.SAMPLE_SERVICE_TRANSFORMATION_ERROR.format(sampleId));
+          ex, ServiceMessage.SAMPLE_SERVICE_VALIDATION_ERROR.format(sampleId));
     }
   }
 
