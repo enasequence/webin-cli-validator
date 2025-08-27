@@ -208,12 +208,23 @@ public class SampleService extends WebinService {
   }
 
   /**
-   * @return false if given Biosample sample is either null or has incomplete information, i.e.,
-   *     missing an organism attribute. True otherwise.
+   * Checks whether a given {@link Sample} is considered valid for BioSamples.
+   *
+   * <p>A sample is valid if at least one of the following conditions holds:
+   *
+   * <ul>
+   *   <li>The sample has a non-null taxonomy ID.
+   *   <li>The sample contains an attribute named "organism" (case-insensitive).
+   * </ul>
+   *
+   * @param sample the sample to validate
+   * @return {@code true} if the sample is valid according to BioSamples rules, {@code false}
+   *     otherwise
    */
   private boolean isBiosamplesSampleValid(Sample sample) {
-    return sample.getAttributes().stream()
-        .anyMatch(attribute -> attribute.getName().equalsIgnoreCase("organism"));
+    return sample.getTaxId() != null
+        || sample.getAttributes().stream()
+            .anyMatch(attribute -> attribute.getName().equalsIgnoreCase("organism"));
   }
 
   private ResponseEntity<SampleResponse> executeHttpGet(
