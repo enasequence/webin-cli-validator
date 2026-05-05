@@ -26,7 +26,7 @@ before_script:
 build:
   stage: build
   script:
-    - ./gradlew clean clean assemble --info
+    - ./gradlew clean assemble --info
   tags:
     - ena-dcap-gitlab-runner
   artifacts:
