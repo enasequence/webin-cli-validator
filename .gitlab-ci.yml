@@ -15,7 +15,7 @@ variables:
 stages:
   - build
   - test
-  - deploy
+  - publish
 cache:
   paths:
     - .gradle/wrapper
@@ -44,7 +44,7 @@ test:
   allow_failure: true
 
 publish:
-  stage: deploy
+  stage: publish
   needs:
     - job: build
       artifacts: true
