@@ -18,7 +18,8 @@ public class GenomeManifest extends Manifest<GenomeManifest.FileType> {
     FLATFILE,
     AGP,
     CHROMOSOME_LIST,
-    UNLOCALISED_LIST
+    UNLOCALISED_LIST,
+    GFF3
   }
 
   private String assemblyType;
