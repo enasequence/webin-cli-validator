@@ -16,6 +16,7 @@ public class TranscriptomeManifest extends Manifest<TranscriptomeManifest.FileTy
   public enum FileType {
     FASTA,
     FLATFILE,
+    GFF3,
   }
 
   private String program;
