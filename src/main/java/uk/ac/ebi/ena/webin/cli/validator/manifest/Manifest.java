@@ -145,6 +145,12 @@ public abstract class Manifest<FileType extends Enum<FileType>> {
         .collect(Collectors.toList());
   }
 
+  public List<SubmissionFile<FileType>> filesWithTypeName(String typeName) {
+    return files.get().stream()
+        .filter(f -> f.getFileType() != null && f.getFileType().name().equals(typeName))
+        .collect(Collectors.toList());
+  }
+
   public boolean isIgnoreErrors() {
     return ignoreErrors;
   }
