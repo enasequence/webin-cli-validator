@@ -147,7 +147,7 @@ public abstract class Manifest<FileType extends Enum<FileType>> {
 
   public List<SubmissionFile<FileType>> filesWithTypeName(String typeName) {
     return files.get().stream()
-        .filter(f -> f.getFileType() != null && f.getFileType().name().equals(typeName))
+        .filter(f -> f.getFileType() != null && f.getFileType().name().equalsIgnoreCase(typeName))
         .collect(Collectors.toList());
   }
 
