@@ -16,5 +16,6 @@ public class SequenceManifest extends Manifest<SequenceManifest.FileType> {
   public enum FileType {
     FLATFILE,
     TAB,
+    GFF3
   }
 }
