@@ -21,6 +21,7 @@ public class AnnotationManifest extends Manifest<AnnotationManifest.FileType> {
   }
 
   private String analysisType;
+  private String primaryId;
   private Map<String, String> attributes = new LinkedHashMap<>();
 
   public String getAnalysisType() {
@@ -29,6 +30,14 @@ public class AnnotationManifest extends Manifest<AnnotationManifest.FileType> {
 
   public void setAnalysisType(String analysisType) {
     this.analysisType = analysisType;
+  }
+
+  public String getPrimaryId() {
+    return primaryId;
+  }
+
+  public void setPrimaryId(String primaryId) {
+    this.primaryId = primaryId;
   }
 
   public Map<String, String> getAttributes() {
